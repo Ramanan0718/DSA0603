@@ -1,0 +1,27 @@
+# Install once
+install.packages("igraph")
+
+library(igraph)
+
+from <- c("A","A","B","C","C","D","E","F","G","H")
+to   <- c("B","C","D","D","E","E","F","G","H","A")
+
+g <- graph_from_data_frame(data.frame(from,to), directed=FALSE)
+
+plot(g,
+     vertex.color="skyblue",
+     vertex.size=30,
+     vertex.label.cex=1.2)
+
+# Degree
+deg <- degree(g)
+print(deg)
+
+# Highest Degree
+names(which.max(deg))
+
+# Circular Layout
+plot(g,
+     layout=layout_in_circle(g),
+     vertex.color="orange",
+     vertex.size=30)
