@@ -1,0 +1,34 @@
+year <- 2016:2025
+sales <- c(150,170,200,240,260,300,340,390,430,480)
+profit <- c(20,25,32,40,42,55,65,72,82,95)
+customers <- c(1200,1500,1800,2200,2400,2800,3300,3800,4200,4700)
+branches <- c(5,6,7,8,8,10,11,12,13,15)
+
+# Line Chart
+plot(year, sales,
+     type="o",
+     pch=19,
+     xlab="Year",
+     ylab="Sales",
+     main="Yearly Sales")
+
+grid()
+
+# Bubble Plot
+symbols(sales, profit,
+        circles=customers,
+        inches=0.25,
+        bg="lightgreen",
+        xlab="Sales",
+        ylab="Profit",
+        main="Sales vs Profit")
+
+# Correlation Matrix
+data <- data.frame(sales,profit,customers,branches)
+cor(data)
+
+# Scatter Plot Matrix
+pairs(data)
+
+# Heatmap
+heatmap(cor(data), symm=TRUE)
