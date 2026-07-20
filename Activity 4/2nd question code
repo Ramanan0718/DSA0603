@@ -1,0 +1,17 @@
+# Daily Steps
+steps <- c(4200,5000,5600,6100,6800,7200,8100,9200,10400,12000)
+
+# ECDF
+ecdf_steps <- ecdf(steps)
+
+# Plot
+plot(ecdf_steps,
+     main="ECDF of Daily Steps",
+     xlab="Steps",
+     ylab="Cumulative Probability",
+     col="darkgreen")
+
+grid()
+
+# Proportion of participants with <=8000 steps
+ecdf_steps(8000)
