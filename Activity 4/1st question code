@@ -1,0 +1,20 @@
+# Student Marks
+marks <- c(45,52,58,60,65,68,72,75,80,90)
+
+# ECDF
+ecdf_marks <- ecdf(marks)
+
+# Plot
+plot(ecdf_marks,
+     main="ECDF of Student Marks",
+     xlab="Marks",
+     ylab="Cumulative Probability",
+     col="blue")
+
+grid()
+
+# Cumulative Probability
+data.frame(
+  Marks = sort(marks),
+  Cumulative_Probability = ecdf_marks(sort(marks))
+)
