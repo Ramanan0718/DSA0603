@@ -1,0 +1,28 @@
+month <- 1:3
+
+A <- c(2000,2200,2400)
+B <- c(1500,1800,1600)
+C <- c(1200,1400,1100)
+
+plot(month, A,
+     type="l",
+     col="red",
+     lwd=2,
+     ylim=c(0,2500),
+     xlab="Month",
+     ylab="Sales",
+     main="Overall Sales Trend")
+
+lines(month, B,
+      col="blue",
+      lwd=2)
+
+lines(month, C,
+      col="green",
+      lwd=2)
+
+legend("topleft",
+       legend=c("Product A","Product B","Product C"),
+       col=c("red","blue","green"),
+       lty=1,
+       lwd=2)
