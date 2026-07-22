@@ -1,0 +1,52 @@
+# Install packages (Run only once)
+# install.packages("shiny")
+
+library(shiny)
+
+# Data
+month <- c("January", "February", "March", "April", "May")
+sales <- c(15000, 18000, 22000, 20000, 23000)
+
+product <- c("Product A", "Product B", "Product C", "Product D", "Product E")
+product_sales <- c(250, 180, 300, 220, 270)
+
+# UI
+ui <- fluidPage(
+    titlePanel("Monthly Sales Dashboard"),
+
+    fluidRow(
+        column(6,
+               plotOutput("linePlot")
+        ),
+        column(6,
+               plotOutput("barPlot")
+        )
+    )
+)
+
+# Server
+server <- function(input, output) {
+
+    output$linePlot <- renderPlot({
+        plot(sales,
+             type = "o",
+             xaxt = "n",
+             col = "blue",
+             xlab = "Month",
+             ylab = "Sales ($)",
+             main = "Monthly Sales")
+        axis(1, at = 1:5, labels = month)
+    })
+
+    output$barPlot <- renderPlot({
+        barplot(product_sales,
+                names.arg = product,
+                col = "skyblue",
+                xlab = "Products",
+                ylab = "Sales",
+                main = "Top Selling Products")
+    })
+}
+
+# Run the Dashboard
+shinyApp(ui = ui, server = server)
