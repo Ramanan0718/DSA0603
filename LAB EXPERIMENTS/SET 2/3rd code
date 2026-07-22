@@ -1,0 +1,22 @@
+customer_id <- c(1,2,3,4,5)
+age <- c(25,30,35,28,40)
+score <- c(4,5,3,4,5)
+
+age_group <- cut(age,
+                 breaks=c(20,30,40,50),
+                 labels=c("21-30","31-40","41-50"),
+                 include.lowest=TRUE)
+
+data <- table(age_group, score)
+
+barplot(data,
+        beside=FALSE,
+        col=c("skyblue","orange","green"),
+        main="Satisfaction Score by Age Group",
+        xlab="Age Group",
+        ylab="Number of Customers")
+
+legend("topright",
+       legend=colnames(data),
+       fill=c("skyblue","orange","green"),
+       title="Score")
