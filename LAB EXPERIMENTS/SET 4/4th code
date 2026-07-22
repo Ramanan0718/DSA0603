@@ -1,0 +1,51 @@
+# Install package once
+# install.packages("shiny")
+
+library(shiny)
+
+product_name <- c("Product A","Product B","Product C","Product D","Product E")
+quantity <- c(250,175,300,200,220)
+
+electronics <- c(120,80,150,100,110)
+grocery <- c(130,95,150,100,110)
+
+inventory <- rbind(electronics, grocery)
+
+ui <- fluidPage(
+    titlePanel("Product Inventory Dashboard"),
+
+    fluidRow(
+        column(6,
+               plotOutput("barChart")
+        ),
+        column(6,
+               plotOutput("stackChart")
+        )
+    )
+)
+
+server <- function(input, output){
+
+    output$barChart <- renderPlot({
+        barplot(quantity,
+                names.arg=product_name,
+                col="skyblue",
+                xlab="Products",
+                ylab="Quantity",
+                main="Inventory Quantity")
+    })
+
+    output$stackChart <- renderPlot({
+        barplot(inventory,
+                names.arg=product_name,
+                col=c("orange","green"),
+                main="Category-wise Quantity")
+
+        legend("topright",
+               legend=c("Electronics","Grocery"),
+               fill=c("orange","green"))
+    })
+
+}
+
+shinyApp(ui=ui, server=server)
