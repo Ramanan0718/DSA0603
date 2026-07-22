@@ -1,0 +1,9 @@
+customer_id <- c(1,2,3)
+age <- c(28,35,42)
+
+barplot(age,
+        names.arg=customer_id,
+        col="skyblue",
+        xlab="Customer ID",
+        ylab="Age",
+        main="Customer Age Distribution")
