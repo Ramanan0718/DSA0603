@@ -1,0 +1,9 @@
+date <- c("2023-01-01","2023-01-02","2023-01-03","2023-01-04","2023-01-05")
+ctr <- c(2.3,2.7,2.0,2.4,2.6)
+
+barplot(ctr,
+        names.arg=date,
+        col="orange",
+        xlab="Date",
+        ylab="Click-Through Rate (%)",
+        main="Click-Through Rate by Day")
