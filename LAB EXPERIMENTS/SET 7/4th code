@@ -1,0 +1,57 @@
+# Install package once
+# install.packages("shiny")
+
+library(shiny)
+
+customer_id <- c(1,2,3)
+age <- c(28,35,42)
+gender <- c("Female","Male","Female")
+income <- c(50000,60000,75000)
+
+ui <- fluidPage(
+
+    titlePanel("Customer Demographics Dashboard"),
+
+    fluidRow(
+        column(6,
+               plotOutput("barChart")
+        ),
+        column(6,
+               plotOutput("pieChart")
+        )
+    ),
+
+    tableOutput("customerTable")
+)
+
+server <- function(input, output){
+
+    output$barChart <- renderPlot({
+        barplot(age,
+                names.arg=customer_id,
+                col="skyblue",
+                xlab="Customer ID",
+                ylab="Age",
+                main="Customer Age Distribution")
+    })
+
+    output$pieChart <- renderPlot({
+        gender_count <- table(gender)
+
+        pie(gender_count,
+            labels=names(gender_count),
+            col=c("pink","lightblue"),
+            main="Gender Distribution")
+    })
+
+    output$customerTable <- renderTable({
+        data.frame(
+            Customer_ID=customer_id,
+            Age=age,
+            Gender=gender,
+            Income=income
+        )
+    })
+}
+
+shinyApp(ui=ui, server=server)
