@@ -1,0 +1,10 @@
+years_service <- c(5,3,7,4,2)
+performance_score <- c(85,92,78,90,76)
+
+plot(years_service,
+     performance_score,
+     pch=19,
+     col="darkgreen",
+     xlab="Years of Service",
+     ylab="Performance Score",
+     main="Years of Service vs Performance Score")
