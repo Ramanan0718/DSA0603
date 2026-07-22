@@ -1,0 +1,17 @@
+employee_id <- c(1,2,3,4,5)
+performance_score <- c(85,92,78,90,76)
+
+plot(employee_id,
+     performance_score,
+     type="o",
+     col="blue",
+     pch=16,
+     xlab="Employee ID",
+     ylab="Performance Score",
+     main="Employee Performance Trend")
+
+legend("topright",
+       legend="Performance Score",
+       col="blue",
+       lty=1,
+       pch=16)
