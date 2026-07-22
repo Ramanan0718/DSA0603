@@ -1,0 +1,17 @@
+product <- c("Product A","Product B","Product C","Product D","Product E")
+
+electronics <- c(120,80,150,100,110)
+grocery <- c(130,95,150,100,110)
+
+inventory <- rbind(electronics, grocery)
+
+barplot(inventory,
+        names.arg=product,
+        col=c("orange","green"),
+        xlab="Products",
+        ylab="Quantity",
+        main="Quantity by Product Category")
+
+legend("topright",
+       legend=c("Electronics","Grocery"),
+       fill=c("orange","green"))
