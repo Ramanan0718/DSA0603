@@ -1,0 +1,9 @@
+product <- c("Product A","Product B","Product C","Product D","Product E")
+sales <- c(250,180,300,220,270)
+
+barplot(sales,
+        names.arg=product,
+        col="skyblue",
+        xlab="Products",
+        ylab="Sales",
+        main="Top Selling Products")
