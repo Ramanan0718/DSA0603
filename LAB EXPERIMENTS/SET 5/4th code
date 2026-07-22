@@ -1,0 +1,50 @@
+# Install package once
+# install.packages("shiny")
+
+library(shiny)
+
+date <- as.Date(c("2023-01-01","2023-01-02","2023-01-03","2023-01-04","2023-01-05"))
+page_views <- c(1500,1600,1400,1650,1800)
+ctr <- c(2.3,2.7,2.0,2.4,2.6)
+
+ui <- fluidPage(
+
+    titlePanel("Website Traffic Dashboard"),
+
+    fluidRow(
+        column(6,
+               plotOutput("linePlot")
+        ),
+        column(6,
+               plotOutput("barPlot")
+        )
+    )
+)
+
+server <- function(input, output){
+
+    output$linePlot <- renderPlot({
+
+        plot(date,
+             page_views,
+             type="o",
+             col="blue",
+             pch=16,
+             xlab="Date",
+             ylab="Page Views",
+             main="Daily Page Views")
+    })
+
+    output$barPlot <- renderPlot({
+
+        barplot(ctr,
+                names.arg=as.character(date),
+                col="orange",
+                xlab="Date",
+                ylab="CTR (%)",
+                main="Click-Through Rate")
+    })
+
+}
+
+shinyApp(ui=ui, server=server)
