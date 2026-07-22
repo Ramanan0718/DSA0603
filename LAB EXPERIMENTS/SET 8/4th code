@@ -1,0 +1,60 @@
+# Install once
+# install.packages("shiny")
+
+library(shiny)
+
+employee_id <- c(1,2,3)
+department <- c("Sales","HR","Marketing")
+years_service <- c(5,3,7)
+performance_score <- c(85,92,78)
+
+ui <- fluidPage(
+
+    titlePanel("Employee Performance Dashboard"),
+
+    fluidRow(
+        column(6,
+               plotOutput("lineChart")
+        ),
+        column(6,
+               plotOutput("barChart")
+        )
+    ),
+
+    tableOutput("empTable")
+)
+
+server <- function(input, output){
+
+    output$lineChart <- renderPlot({
+        plot(employee_id,
+             performance_score,
+             type="o",
+             col="blue",
+             pch=16,
+             xlab="Employee ID",
+             ylab="Performance Score",
+             main="Performance Trend")
+    })
+
+    output$barChart <- renderPlot({
+        dept_count <- table(department)
+
+        barplot(dept_count,
+                col=c("red","green","blue"),
+                xlab="Department",
+                ylab="Employees",
+                main="Department Distribution")
+    })
+
+    output$empTable <- renderTable({
+        data.frame(
+            Employee_ID = employee_id,
+            Department = department,
+            Years_of_Service = years_service,
+            Performance_Score = performance_score
+        )
+    })
+}
+
+shinyApp(ui = ui, server = server)
