@@ -1,0 +1,74 @@
+# Install package once
+# install.packages("shiny")
+
+library(shiny)
+
+product <- c("Product A","Product B","Product C")
+
+jan <- c(2000,1500,1200)
+feb <- c(2200,1800,1400)
+mar <- c(2400,1600,1100)
+
+sales <- rbind(jan,feb,mar)
+
+ui <- fluidPage(
+
+    titlePanel("Product Sales Dashboard"),
+
+    fluidRow(
+        column(6,
+               plotOutput("groupBar")
+        ),
+        column(6,
+               plotOutput("lineChart")
+        )
+    ),
+
+    tableOutput("salesTable")
+)
+
+server <- function(input, output){
+
+    output$groupBar <- renderPlot({
+        barplot(sales,
+                beside=TRUE,
+                names.arg=product,
+                col=c("red","green","blue"),
+                main="Grouped Bar Chart")
+
+        legend("topright",
+               legend=c("January","February","March"),
+               fill=c("red","green","blue"))
+    })
+
+    output$lineChart <- renderPlot({
+        plot(1:3, jan,
+             type="l",
+             col="red",
+             lwd=2,
+             ylim=c(0,2500),
+             xlab="Month",
+             ylab="Sales",
+             main="Sales Trend")
+
+        lines(1:3, feb, col="blue", lwd=2)
+        lines(1:3, mar, col="green", lwd=2)
+
+        legend("topleft",
+               legend=c("January","February","March"),
+               col=c("red","blue","green"),
+               lty=1,
+               lwd=2)
+    })
+
+    output$salesTable <- renderTable({
+        data.frame(
+            Product=product,
+            January=jan,
+            February=feb,
+            March=mar
+        )
+    })
+}
+
+shinyApp(ui=ui, server=server)
