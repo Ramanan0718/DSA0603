@@ -1,0 +1,8 @@
+score <- c(4,5,3,4,5)
+
+freq <- table(score)
+
+pie(freq,
+    labels=paste(names(freq), "Stars"),
+    col=c("red","yellow","green"),
+    main="Customer Satisfaction Scores")
