@@ -1,0 +1,46 @@
+# -------------------------------
+# QUESTION 2 - WORKING R CODE
+# -------------------------------
+
+# Install ggplot2 only once
+# install.packages("ggplot2")
+
+library(ggplot2)
+
+# Create the dataset
+avg_score <- data.frame(
+  Subject = c("Mathematics", "Science", "English", "History", "Computer Sci"),
+  Average_Score = c(72, 68, 75, 64, 81),
+  stringsAsFactors = FALSE
+)
+
+# Sort by score (highest first)
+avg_score <- avg_score[order(avg_score$Average_Score, decreasing = TRUE), ]
+
+# Create a color column
+avg_score$Color <- "steelblue"
+avg_score$Color[avg_score$Average_Score == max(avg_score$Average_Score)] <- "red"
+
+# Convert Subject to factor to keep sorted order
+avg_score$Subject <- factor(avg_score$Subject, levels = avg_score$Subject)
+
+# Create the bar chart
+ggplot(avg_score, aes(x = Subject, y = Average_Score)) +
+  geom_col(fill = avg_score$Color, width = 0.7) +
+  geom_text(aes(label = Average_Score),
+            vjust = -0.5,
+            size = 5) +
+  labs(
+    title = "Average Score by Subject",
+    x = "Subject",
+    y = "Average Score"
+  ) +
+  ylim(0, 90) +
+  theme_minimal()
+
+# Print interpretation correctly
+cat("INTERPRETATION:\n")
+cat("- Subjects are arranged from highest to lowest score.\n")
+cat("- Computer Sci has the highest score (81) and is highlighted in red.\n")
+cat("- Other subjects are shown in blue for consistent comparison.\n")
+cat("- Data labels above the bars display the exact scores clearly.\n")
