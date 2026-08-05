@@ -1,0 +1,94 @@
+# Install ggplot2 if not already installed
+install.packages("ggplot2")
+
+# Load library
+library(ggplot2)
+
+############################################################
+# QUESTION 5 – Financial Analytics Visualization
+############################################################
+
+# Create dataset
+companies <- data.frame(
+  Company = paste("C",1:20,sep=""),
+
+  Sector = c("IT","Banking","Healthcare","Retail","Energy",
+             "IT","Banking","Healthcare","Retail","Energy",
+             "IT","Banking","Healthcare","Retail","Energy",
+             "IT","Banking","Healthcare","Retail","Energy"),
+
+  Revenue = c(420,580,720,850,980,
+              1150,1320,1480,1650,1820,
+              2050,2280,2550,2840,3150,
+              3480,3860,4250,4680,5200),
+
+  ProfitMargin = c(8.2,15.6,11.4,9.3,18.5,
+                   20.4,17.8,14.2,10.5,22.1,
+                   24.5,19.8,16.7,13.4,26.2,
+                   28.1,21.5,18.3,15.2,30.4),
+
+  Employees = c(1500,3200,2100,4200,2800,
+                5100,6800,3900,7200,4500,
+                8100,9500,6200,10300,7200,
+                11800,13200,8600,14500,16000),
+
+  MarketCap = c(8500,12000,9800,7600,14500,
+                18200,21500,16800,13200,24500,
+                28500,32500,24800,19200,38200,
+                42500,46800,35600,29800,52000)
+)
+
+############################################################
+# INTEGRATED VISUALIZATION
+############################################################
+
+ggplot(companies,
+       aes(x = Revenue,
+           y = ProfitMargin,
+           size = Employees,
+           color = Sector)) +
+
+  geom_point(alpha = 0.85) +
+
+  # Nonlinear scale for Market Capitalization
+  scale_x_continuous(trans = "log10") +
+
+  # Bubble size represents employee strength
+  scale_size(range = c(3, 14)) +
+
+  labs(title = "Integrated Financial Performance Dashboard",
+       subtitle = "Revenue, Profit Margin, Employees, Market Capitalization and Sector Analysis",
+       x = "Revenue (Log Scale)",
+       y = "Profit Margin (%)",
+       size = "Employees",
+       color = "Industry Sector") +
+
+  facet_wrap(~Sector) +
+
+  theme_minimal()
+
+############################################################
+# INTERPRETATION
+############################################################
+
+cat("QUESTION 5 INTERPRETATION\\n\\n")
+
+cat("X-axis        : Revenue (logarithmic scale)\\n")
+cat("Y-axis        : Profit Margin (%)\\n")
+cat("Bubble Size   : Employee Strength\\n")
+cat("Bubble Color  : Industry Sector\\n")
+cat("Facets        : Separate panels for each sector\\n\\n")
+
+cat("Design Justification:\\n")
+cat("- Revenue is placed on the X-axis because it is the primary financial scale variable.\\n")
+cat("- A logarithmic transformation reduces skewness and allows both small and large companies to be compared fairly.\\n")
+cat("- Profit Margin is mapped to the Y-axis for direct comparison of operational efficiency.\\n")
+cat("- Bubble size represents Employee Strength, enabling workforce comparison without adding another axis.\\n")
+cat("- Distinct colours are used for Industry Sectors to minimise perceptual confusion and support categorical comparison.\\n")
+cat("- Faceting separates sectors, reducing visual clutter and improving interpretability.\\n\\n")
+
+cat("Analytical Insight:\\n")
+cat("- Energy companies show the highest profit margins and market scale.\\n")
+cat("- IT companies combine strong revenue growth with relatively high profit margins.\\n")
+cat("- Retail companies tend to have larger employee counts but lower profit margins compared with IT and Energy sectors.\\n")
+cat("- Banking and Healthcare sectors occupy the middle range for both profitability and workforce size.\\n")
