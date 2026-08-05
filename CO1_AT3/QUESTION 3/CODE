@@ -1,0 +1,77 @@
+# Install ggplot2 if not already installed
+install.packages("ggplot2")
+
+# Load library
+library(ggplot2)
+
+############################################################
+# QUESTION 3 – Climate Visualization
+############################################################
+
+# Create dataset
+climate <- data.frame(
+  City=c("Delhi","Mumbai","Chennai","Kolkata","Hyderabad",
+         "Bangalore","Pune","Ahmedabad","Jaipur","Lucknow",
+         "Bhopal","Patna","Goa","Kochi","Nagpur","Indore",
+         "Surat","Visakhapatnam","Coimbatore","Mysuru"),
+
+  Temperature=c(44,35,38,40,39,31,33,43,45,39,
+                38,40,32,30,41,37,36,34,29,28),
+
+  Humidity=c(22,84,78,72,48,66,58,26,18,42,
+             36,45,89,91,30,34,76,82,68,64),
+
+  Rainfall=c(6,280,220,190,85,120,95,2,1,35,
+             48,72,360,410,12,20,180,240,130,145),
+
+  AQI=c(365,110,125,180,160,72,84,290,320,240,
+        175,220,58,52,270,190,145,98,60,55)
+)
+
+############################################################
+# VISUALIZATION
+############################################################
+
+ggplot(climate,
+       aes(x = Temperature,
+           y = AQI,
+           size = Rainfall,
+           color = Humidity)) +
+
+  geom_point(alpha = 0.85) +
+
+  # Color palette for humidity
+  scale_color_gradient(low = "orange", high = "blue") +
+
+  # Bubble size for rainfall
+  scale_size(range = c(3, 12)) +
+
+  labs(title = "Indian Cities Climate and Air Quality Analysis",
+       x = "Temperature (°C)",
+       y = "Air Quality Index (AQI)",
+       size = "Rainfall (mm)",
+       color = "Humidity (%)") +
+
+  theme_minimal()
+
+############################################################
+# INTERPRETATION
+############################################################
+
+cat("QUESTION 3 INTERPRETATION\\n\\n")
+
+cat("X-axis        : Temperature\\n")
+cat("Y-axis        : Air Quality Index (AQI)\\n")
+cat("Bubble Size   : Rainfall\\n")
+cat("Bubble Color  : Humidity\\n\\n")
+
+cat("Design Justification:\\n")
+cat("- Temperature and AQI are continuous variables, so they are mapped to the Cartesian axes for accurate comparison.\\n")
+cat("- Rainfall is represented by bubble size because larger circles naturally indicate greater rainfall amounts.\\n")
+cat("- Humidity uses a sequential orange-to-blue colour scale, where orange indicates lower humidity and blue indicates higher humidity.\\n")
+cat("- This palette is easy to interpret and remains reasonably accessible for most viewers.\\n\\n")
+
+cat("Analytical Insight:\\n")
+cat("- Delhi and Jaipur show very high AQI values and high temperatures.\\n")
+cat("- Kochi and Goa have large bubbles, indicating heavy rainfall and high humidity.\\n")
+cat("- Mysuru and Coimbatore have comparatively lower temperatures and lower AQI values, indicating better environmental conditions.\\n")
