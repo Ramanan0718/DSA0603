@@ -1,0 +1,71 @@
+# Install ggplot2 only (if not installed)
+install.packages("ggplot2")
+
+# Load library
+library(ggplot2)
+
+# Create dataset
+energy <- data.frame(
+  Month = factor(month.abb, levels = month.abb),
+  Coal  = c(620,580,590,605,640,670,690,720,700,680,650,630),
+  Gas   = c(310,295,305,320,340,355,360,370,365,350,335,320),
+  Solar = c(45,60,90,130,180,230,250,245,210,160,90,50),
+  Wind  = c(80,95,120,150,170,185,195,190,175,150,110,90),
+  Hydro = c(140,150,160,170,180,195,205,210,200,185,165,150)
+)
+
+############################################################
+# 1. CARTESIAN LINE CHART
+############################################################
+
+# Create long-format data manually
+months <- rep(energy$Month, 5)
+source <- c(rep("Coal", 12),
+            rep("Gas", 12),
+            rep("Solar", 12),
+            rep("Wind", 12),
+            rep("Hydro", 12))
+
+generation <- c(energy$Coal, energy$Gas, energy$Solar,
+                energy$Wind, energy$Hydro)
+
+energy_long <- data.frame(Month = months,
+                          Source = source,
+                          Generation = generation)
+
+# Draw line chart
+ggplot(energy_long,
+       aes(x = Month, y = Generation,
+           color = Source, group = Source)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  labs(title = "Monthly Electricity Generation",
+       x = "Month",
+       y = "Generation (GWh)",
+       color = "Energy Source") +
+  theme_minimal()
+
+############################################################
+# 2. POLAR COORDINATE CHART
+############################################################
+
+# Calculate total generation per month
+energy$Total <- energy$Coal + energy$Gas +
+                energy$Solar + energy$Wind + energy$Hydro
+
+# Draw polar chart
+ggplot(energy, aes(x = Month, y = Total, fill = Total)) +
+  geom_col(color = "white") +
+  coord_polar() +
+  scale_fill_gradient(low = "skyblue", high = "darkblue") +
+  labs(title = "Total Monthly Electricity Generation (Polar Chart)",
+       fill = "Total Generation") +
+  theme_minimal()
+
+############################################################
+# INTERPRETATION
+############################################################
+
+cat("Cartesian chart is useful for comparing exact monthly values.\\n")
+cat("Polar chart is useful for showing seasonal or cyclical patterns.\\n")
+cat("For analytical insight, the Cartesian chart is more effective.\\n")
