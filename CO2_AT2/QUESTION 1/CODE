@@ -1,0 +1,44 @@
+# Install ggplot2 if not installed
+install.packages("ggplot2")
+
+# Load library
+library(ggplot2)
+
+# Create dataset
+avg_score <- data.frame(
+  Subject = c("Mathematics", "Science", "English", "History", "Computer Sci"),
+  Average_Score = c(72, 68, 75, 64, 81)
+)
+
+# Sort in descending order
+avg_score <- avg_score[order(-avg_score$Average_Score), ]
+
+# Create color column
+avg_score$Color <- ifelse(avg_score$Average_Score == max(avg_score$Average_Score),
+                          "Highest", "Normal")
+
+# Bar plot
+ggplot(avg_score, aes(x = reorder(Subject, -Average_Score),
+                      y = Average_Score,
+                      fill = Color)) +
+  
+  geom_col(width = 0.7) +
+  
+  # Data labels
+  geom_text(aes(label = Average_Score),
+            vjust = -0.5,
+            size = 5) +
+  
+  # Colors
+  scale_fill_manual(values = c("Normal" = "steelblue",
+                               "Highest" = "tomato")) +
+  
+  labs(title = "Average Score by Subject",
+       x = "Subject",
+       y = "Average Score") +
+  
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Interpretation
+cat("Computer Sci has the highest average score (81), so it is highlighted in a different color. The chart is sorted in descending order, making it easy to compare subject performance.\\n")
