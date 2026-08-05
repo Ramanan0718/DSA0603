@@ -1,0 +1,71 @@
+# -------------------------------
+# QUESTION 4 - WORKING R CODE
+# -------------------------------
+
+# Install packages if needed
+# install.packages("ggplot2")
+# install.packages("ggridges")
+
+library(ggplot2)
+library(ggridges)
+
+# --------------------------------------
+# Generate synthetic data
+# --------------------------------------
+
+set.seed(42)
+
+classA <- rnorm(40, mean = 70, sd = 8)
+classB <- rnorm(40, mean = 75, sd = 5)
+classC <- rnorm(40, mean = 65, sd = 12)
+classD <- rnorm(40, mean = 80, sd = 6)
+
+# Combine into one data frame
+scores <- data.frame(
+  Score = c(classA, classB, classC, classD),
+  Class = rep(c("Class A", "Class B", "Class C", "Class D"), each = 40)
+)
+
+# --------------------------------------
+# 1. VIOLIN PLOT WITH BOXPLOT
+# --------------------------------------
+
+ggplot(scores, aes(x = Class, y = Score, fill = Class)) +
+  geom_violin(trim = FALSE, alpha = 0.7) +
+  geom_boxplot(width = 0.15, fill = "white") +
+  labs(title = "Violin Plot of Exam Scores by Class",
+       x = "Class",
+       y = "Exam Score") +
+  theme_minimal()
+
+# --------------------------------------
+# Order classes by mean score
+# --------------------------------------
+
+mean_scores <- aggregate(Score ~ Class, scores, mean)
+ordered_classes <- mean_scores$Class[order(mean_scores$Score)]
+
+scores$Class <- factor(scores$Class, levels = ordered_classes)
+
+# --------------------------------------
+# 2. RIDGELINE PLOT
+# --------------------------------------
+
+ggplot(scores, aes(x = Score, y = Class, fill = Class)) +
+  geom_density_ridges(alpha = 0.7, scale = 1.2) +
+  labs(title = "Ridgeline Plot of Exam Score Distributions",
+       x = "Exam Score",
+       y = "Class") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# --------------------------------------
+# INTERPRETATION
+# --------------------------------------
+
+cat("INTERPRETATION:\n")
+cat("- The violin plot shows the full distribution of exam scores for each class.\n")
+cat("- The embedded boxplot displays the median and interquartile range.\n")
+cat("- Class D has the highest average score, while Class C shows the widest spread of scores.\n")
+cat("- The ridgeline plot highlights overlapping score distributions and makes comparison between classes easier.\n")
+cat("- Ordering the ridgelines by mean score improves readability and helps identify performance differences quickly.\n")
