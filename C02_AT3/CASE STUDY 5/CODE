@@ -1,0 +1,128 @@
+# =====================================================
+# CASE STUDY 5 – ALL 6 GRAPHS IN ONE SCREEN (FIXED)
+# =====================================================
+
+library(igraph)
+
+# ----------------------
+# Data
+# ----------------------
+user_id <- c("U1","U2","U3","U4","U5","U6")
+
+followers <- c(500, 800, 1200, 2000, 1500, 2500)
+likes <- c(100, 180, 250, 400, 320, 500)
+shares <- c(20, 35, 50, 80, 60, 100)
+comments <- c(10, 18, 25, 45, 30, 55)
+
+posting_time <- c(8, 10, 12, 14, 18, 20)
+interactions <- likes + shares + comments
+
+# ----------------------
+# Create 3 x 2 layout
+# ----------------------
+layout(matrix(1:6, nrow = 3, byrow = TRUE))
+par(mar = c(4,4,3,1))
+
+# =====================================================
+# 1. Histogram + Density
+# =====================================================
+hist(likes,
+     probability = TRUE,
+     col = "lightgreen",
+     main = "Distribution of Likes",
+     xlab = "Likes")
+lines(density(likes), col = "blue", lwd = 2)
+
+# =====================================================
+# 2. Scatter Plot
+# =====================================================
+plot(followers, interactions,
+     pch = 19,
+     col = "red",
+     main = "Followers vs Engagement",
+     xlab = "Followers",
+     ylab = "Engagement")
+abline(lm(interactions ~ followers),
+       col = "darkblue", lwd = 2)
+
+# =====================================================
+# 3. Network Visualization
+# =====================================================
+edges <- c("U1","U2",
+           "U2","U3",
+           "U3","U4",
+           "U4","U5",
+           "U5","U6",
+           "U6","U1",
+           "U2","U5")
+
+g <- make_graph(edges, directed = FALSE)
+
+plot(g,
+     vertex.color = "skyblue",
+     vertex.size = 22,
+     vertex.label.cex = 0.9,
+     main = "User Interaction Network")
+
+# =====================================================
+# 4. Temporal Line Plot
+# =====================================================
+plot(posting_time, interactions,
+     type = "l",
+     lwd = 2,
+     col = "darkgreen",
+     main = "Posting Activity Over Time",
+     xlab = "Time (Hour)",
+     ylab = "Interactions")
+points(posting_time, interactions,
+       pch = 19, col = "blue")
+
+# =====================================================
+# 5. Heatmap (without resetting layout)
+# =====================================================
+engagement_matrix <- matrix(c(likes, shares, comments),
+                            nrow = 3, byrow = TRUE)
+
+image(t(engagement_matrix[nrow(engagement_matrix):1, ]),
+      col = heat.colors(12),
+      axes = FALSE,
+      main = "Engagement Heatmap")
+axis(1, at = seq(0,1,length.out=6), labels = user_id, cex.axis=0.7)
+axis(2, at = c(0,0.5,1), labels = c("Comments","Shares","Likes"), las=1, cex.axis=0.7)
+
+# =====================================================
+# 6. Likes vs Shares vs Comments
+# =====================================================
+matplot(cbind(likes, shares, comments),
+        type = "b",
+        pch = c(1,2,3),
+        lty = 1,
+        col = c("blue","red","purple"),
+        xaxt = "n",
+        main = "Likes vs Shares vs Comments",
+        xlab = "Users",
+        ylab = "Count")
+axis(1, at = 1:length(user_id), labels = user_id)
+legend("topleft",
+       legend = c("Likes","Shares","Comments"),
+       col = c("blue","red","purple"),
+       lty = 1,
+       pch = c(1,2,3))
+
+# ----------------------
+# Console Results
+# ----------------------
+cat("Most Influential User : ",
+    user_id[which.max(interactions)], "\n")
+
+cat("Highest Engagement Time : ",
+    posting_time[which.max(interactions)], ":00 hrs\n")
+
+cat("Correlation between Followers and Engagement : ",
+    round(cor(followers, interactions), 2), "\n")
+
+variances <- c(var(likes), var(shares), var(comments))
+metrics <- c("Likes","Shares","Comments")
+
+cat("Most Variable Engagement Metric : ",
+    metrics[which.max(variances)], "\n")
