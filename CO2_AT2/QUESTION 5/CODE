@@ -1,0 +1,57 @@
+# -------------------------------
+# QUESTION 5 - WORKING R CODE
+# -------------------------------
+
+# Install packages if needed
+# install.packages("ggplot2")
+# install.packages("reshape2")
+
+library(ggplot2)
+library(reshape2)
+
+# Load built-in tips dataset
+data("tips")
+
+# --------------------------------------
+# 1. Histogram with KDE overlay
+# --------------------------------------
+
+ggplot(tips, aes(x = total_bill)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 30,
+                 fill = "skyblue",
+                 color = "black",
+                 alpha = 0.7) +
+  geom_density(color = "red", linewidth = 1.2) +
+  labs(title = "Histogram and Density Plot of Total Bill",
+       x = "Total Bill",
+       y = "Density") +
+  theme_minimal()
+
+# --------------------------------------
+# 2. Histogram + KDE grouped by smoker
+# --------------------------------------
+
+ggplot(tips, aes(x = total_bill, fill = smoker)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 30,
+                 alpha = 0.5,
+                 position = "identity",
+                 color = "black") +
+  geom_density(aes(color = smoker), linewidth = 1.2) +
+  labs(title = "Total Bill Distribution by Smoker Status",
+       x = "Total Bill",
+       y = "Density",
+       fill = "Smoker",
+       color = "Smoker") +
+  theme_minimal()
+
+# --------------------------------------
+# INTERPRETATION
+# --------------------------------------
+
+cat("INTERPRETATION:\n")
+cat("- The histogram shows the distribution of total_bill values.\n")
+cat("- The red density curve provides a smooth estimate of the distribution shape.\n")
+cat("- The grouped plot compares smokers and non-smokers using both histograms and density curves.\n")
+cat("- Differences in the density curves help identify variations in spending patterns between the two groups.\n")
