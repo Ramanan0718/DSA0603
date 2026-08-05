@@ -1,0 +1,101 @@
+# -------------------------------
+# QUESTION 3 - WORKING R CODE
+# -------------------------------
+
+# Install packages if needed
+# install.packages("ggplot2")
+
+library(ggplot2)
+
+# Create dataset
+regional_sales <- data.frame(
+  Region = c("North","North","North","North",
+             "South","South","South","South",
+             "East","East","East","East",
+             "West","West","West","West"),
+
+  Quarter = c("Q1","Q2","Q3","Q4",
+              "Q1","Q2","Q3","Q4",
+              "Q1","Q2","Q3","Q4",
+              "Q1","Q2","Q3","Q4"),
+
+  Sales_000s = c(120,135,128,150,
+                 95,110,105,130,
+                 140,138,145,160,
+                 80,85,90,100)
+)
+
+# Keep quarter order correct
+regional_sales$Quarter <- factor(regional_sales$Quarter,
+                                         levels = c("Q1","Q2","Q3","Q4"))
+
+# --------------------------------------
+# 1. GROUPED BAR CHART
+# --------------------------------------
+
+ggplot(regional_sales,
+       aes(x = Region, y = Sales_000s, fill = Quarter)) +
+  geom_col(position = "dodge") +
+  labs(title = "Grouped Bar Chart: Sales by Region and Quarter",
+       x = "Region",
+       y = "Sales (000s)") +
+  theme_minimal()
+
+# --------------------------------------
+# 2. STACKED BAR CHART
+# --------------------------------------
+
+ggplot(regional_sales,
+       aes(x = Region, y = Sales_000s, fill = Quarter)) +
+  geom_col(position = "stack") +
+  labs(title = "Stacked Bar Chart: Quarterly Sales within Region",
+       x = "Region",
+       y = "Sales (000s)") +
+  theme_minimal()
+
+# --------------------------------------
+# 3. DOT PLOT - TOTAL ANNUAL SALES
+# --------------------------------------
+
+total_sales <- aggregate(Sales_000s ~ Region,
+                         data = regional_sales,
+                         sum)
+
+# Sort from highest to lowest
+total_sales <- total_sales[order(-total_sales$Sales_000s), ]
+total_sales$Region <- factor(total_sales$Region,
+                             levels = total_sales$Region)
+
+ggplot(total_sales,
+       aes(x = Region, y = Sales_000s)) +
+  geom_point(size = 5, color = "blue") +
+  labs(title = "Dot Plot: Total Annual Sales by Region",
+       x = "Region",
+       y = "Total Sales (000s)") +
+  theme_minimal()
+
+# --------------------------------------
+# 4. HEATMAP
+# --------------------------------------
+
+ggplot(regional_sales,
+       aes(x = Quarter, y = Region, fill = Sales_000s)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = Sales_000s), size = 4) +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "Heatmap: Region vs Quarter Sales",
+       x = "Quarter",
+       y = "Region",
+       fill = "Sales (000s)") +
+  theme_minimal()
+
+# --------------------------------------
+# INTERPRETATION
+# --------------------------------------
+
+cat("INTERPRETATION:\n")
+cat("- The grouped bar chart compares quarterly sales across regions.\n")
+cat("- The stacked bar chart shows each region's total annual sales contribution by quarter.\n")
+cat("- The dot plot ranks regions by total annual sales.\n")
+cat("- The heatmap uses color intensity to highlight high and low sales values quickly.\n")
+cat("- East has the highest annual sales, while West has the lowest.\n")
