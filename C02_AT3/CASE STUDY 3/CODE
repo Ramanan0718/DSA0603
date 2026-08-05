@@ -1,0 +1,101 @@
+# =====================================================
+# CASE STUDY 3 – Hospital Patient Analytics
+# ALL OUTPUTS IN ONE WINDOW
+# =====================================================
+
+# Install package once if not installed
+# install.packages("vioplot")
+
+library(vioplot)
+
+# -----------------------------------------------------
+# Sample Dataset
+# -----------------------------------------------------
+department <- c("Cardiology", "Neurology", "Orthopedics",
+                "Pediatrics", "Oncology", "General")
+
+treatment_cost <- c(25000, 40000, 30000, 15000, 50000, 20000)
+
+age <- c(25, 35, 45, 55, 65, 75)
+recovery_time <- c(5, 7, 8, 10, 12, 15)
+
+disease_category <- c(30, 25, 20, 15, 10)
+disease_labels <- c("Heart", "Brain", "Bone", "Child", "Cancer")
+
+# -----------------------------------------------------
+# Arrange all graphs in one output window
+# -----------------------------------------------------
+par(mfrow = c(3,2), mar = c(4,4,3,1))
+
+# =====================================================
+# 1. HEATMAP – Monthly Patient Admissions / Costs
+# =====================================================
+heat_data <- matrix(c(25000, 40000, 30000,
+                      15000, 50000, 20000),
+                    nrow = 2, byrow = TRUE)
+
+heatmap(heat_data,
+        Rowv = NA,
+        Colv = NA,
+        col = heat.colors(10),
+        main = "Heatmap of Treatment Costs")
+
+# =====================================================
+# 2. HISTOGRAM – Distribution of Treatment Costs
+# =====================================================
+hist(treatment_cost,
+     col = "skyblue",
+     main = "Treatment Cost Distribution",
+     xlab = "Treatment Cost",
+     ylab = "Frequency")
+
+# =====================================================
+# 3. VIOLIN PLOT – Department-wise Treatment Costs
+# =====================================================
+vioplot(treatment_cost,
+        names = "Cost",
+        col = "lightgreen",
+        main = "Violin Plot of Treatment Costs")
+
+# =====================================================
+# 4. DENSITY PLOT – Treatment Cost Density
+# =====================================================
+plot(density(treatment_cost),
+     col = "blue",
+     lwd = 2,
+     main = "Density Plot of Treatment Costs",
+     xlab = "Treatment Cost")
+
+# =====================================================
+# 5. SCATTER PLOT – Age vs Recovery Time
+# =====================================================
+plot(age, recovery_time,
+     pch = 19,
+     col = "red",
+     main = "Age vs Recovery Time",
+     xlab = "Patient Age",
+     ylab = "Recovery Time (Days)")
+
+abline(lm(recovery_time ~ age),
+       col = "darkblue",
+       lwd = 2)
+
+# =====================================================
+# 6. PIE CHART – Disease Category Proportions
+# =====================================================
+pie(disease_category,
+    labels = disease_labels,
+    col = rainbow(5),
+    main = "Disease Category Proportion")
+
+# =====================================================
+# INTERPRETATION OUTPUTS
+# =====================================================
+cat("Highest Treatment Cost Department : ",
+    department[which.max(treatment_cost)], "\n")
+
+cat("Largest Disease Category : ",
+    disease_labels[which.max(disease_category)], "\n")
+
+cat("Correlation between Age and Recovery Time : ",
+    round(cor(age, recovery_time), 2), "\n")
