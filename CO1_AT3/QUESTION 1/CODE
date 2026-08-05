@@ -1,0 +1,51 @@
+# Install package if needed
+install.packages("ggplot2")
+
+# Load library
+library(ggplot2)
+
+# Create dataset
+retail <- data.frame(
+  Branch=c("B1","B2","B3","B4","B5","B6","B7","B8","B9","B10",
+           "B11","B12","B13","B14","B15","B16","B17","B18","B19","B20"),
+  Region=c("North","South","East","West","North","South","East","West",
+           "North","South","East","West","North","South","East","West",
+           "North","South","East","West"),
+  Category=c("Electronics","Furniture","Clothing","Food","Electronics",
+             "Furniture","Clothing","Food","Electronics","Furniture",
+             "Clothing","Food","Electronics","Furniture","Clothing",
+             "Food","Electronics","Furniture","Clothing","Food"),
+  Sales=c(450000,620000,180000,920000,350000,720000,250000,1080000,
+          560000,670000,195000,980000,430000,760000,280000,1150000,
+          510000,690000,220000,1250000),
+  Profit=c(45000,95000,-12000,185000,25000,120000,18000,225000,
+           72000,98000,-8000,205000,51000,132000,24000,250000,
+           69000,115000,15000,285000),
+  Customers=c(1200,2500,980,4200,1800,3000,1250,5200,
+              2100,3300,1100,4700,1750,3600,1450,5600,
+              2200,3900,1600,6100)
+)
+
+# Visualization
+ggplot(retail, aes(x = Sales,
+                   y = Profit,
+                   size = Customers,
+                   color = Category,
+                   shape = Region)) +
+  geom_point(alpha = 0.8) +
+  scale_x_log10() +
+  scale_size(range = c(3, 12)) +
+  labs(title = "Retail Sales, Profit and Customer Analysis",
+       x = "Sales (Log Scale)",
+       y = "Profit",
+       size = "Customers",
+       color = "Product Category",
+       shape = "Region") +
+  theme_minimal()
+
+# Interpretation
+cat("Sales is shown on the X-axis using a logarithmic scale.\\n")
+cat("Profit is shown on the Y-axis.\\n")
+cat("Customers are represented by bubble size.\\n")
+cat("Product Category is represented by color.\\n")
+cat("Region is represented by different point shapes.\\n")
