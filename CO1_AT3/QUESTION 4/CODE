@@ -1,0 +1,85 @@
+# Install ggplot2 if not already installed
+install.packages("ggplot2")
+
+# Load library
+library(ggplot2)
+
+############################################################
+# QUESTION 4 – Software Analytics Visualization
+############################################################
+
+# Create dataset
+software <- data.frame(
+  Team = paste("T",1:20,sep=""),
+
+  LinesOfCode = c(12000,18000,25000,35000,48000,
+                  62000,81000,96000,120000,150000,
+                  185000,240000,310000,390000,480000,
+                  620000,810000,1050000,1350000,1800000),
+
+  Bugs = c(35,52,60,72,88,
+           110,125,142,165,188,
+           205,240,280,320,365,
+           420,490,560,640,720),
+
+  Developers = c(5,7,9,10,12,
+                 14,16,18,20,22,
+                 25,28,30,34,38,
+                 42,46,50,55,60),
+
+  Complexity = c(2.1,2.4,2.7,3.0,3.2,
+                 3.5,3.8,4.1,4.5,4.8,
+                 5.1,5.4,5.8,6.2,6.6,
+                 7.1,7.6,8.0,8.5,9.0)
+)
+
+############################################################
+# VISUALIZATION WITH NONLINEAR TRANSFORMATION
+############################################################
+
+ggplot(software,
+       aes(x = LinesOfCode,
+           y = Bugs,
+           size = Developers,
+           color = Complexity)) +
+
+  geom_point(alpha = 0.85) +
+
+  # Nonlinear logarithmic transformation
+  scale_x_log10() +
+
+  # Bubble size for developers
+  scale_size(range = c(3, 12)) +
+
+  # Sequential color palette for complexity
+  scale_color_gradient(low = "lightgreen", high = "darkred") +
+
+  labs(title = "Software Project Complexity and Bug Analysis",
+       subtitle = "Logarithmic X-axis used for highly skewed Lines of Code data",
+       x = "Lines of Code (Log Scale)",
+       y = "Number of Bugs",
+       size = "Developers",
+       color = "Complexity") +
+
+  theme_minimal()
+
+############################################################
+# INTERPRETATION
+############################################################
+
+cat("QUESTION 4 INTERPRETATION\\n\\n")
+
+cat("X-axis        : Lines of Code (logarithmic scale)\\n")
+cat("Y-axis        : Number of Bugs\\n")
+cat("Bubble Size   : Number of Developers\\n")
+cat("Bubble Color  : Complexity Level\\n\\n")
+
+cat("Why use a logarithmic transformation?\\n")
+cat("- Lines of Code ranges from 12,000 to 1,800,000, which is extremely skewed.\\n")
+cat("- On a linear scale, smaller projects would be compressed near zero and become difficult to compare.\\n")
+cat("- The log scale spreads the values more evenly, making both small and large projects visible.\\n\\n")
+
+cat("Analytical Insight:\\n")
+cat("- Projects with more lines of code generally have more bugs.\\n")
+cat("- Larger development teams are associated with larger and more complex projects.\\n")
+cat("- Complexity increases progressively from light green to dark red, helping identify high-risk software projects quickly.\\n")
