@@ -1,0 +1,164 @@
+## Complete R Program for Questions 1–4
+
+
+# Install packages if not already installed
+install.packages("ggplot2")
+install.packages("viridis")
+
+# Load libraries
+library(ggplot2)
+library(viridis)
+
+############################################################
+# QUESTION 1 – Healthcare Analytics
+############################################################
+
+health_data <- data.frame(
+  Patient = c("P1","P2","P3","P4","P5","P6","P7","P8"),
+  Age = c(24,32,41,48,56,65,38,29),
+  BMI = c(19.8,24.5,28.1,30.3,33.2,36.5,26.2,22.1),
+  BloodPressure = c(110,118,132,145,152,168,124,116),
+  Severity = factor(c("Low","Medium","High","High",
+                      "Critical","Critical","Medium","Low"),
+                    levels = c("Low","Medium","High","Critical"))
+)
+
+ggplot(health_data,
+       aes(x = Age,
+           y = BloodPressure,
+           color = Severity,
+           size = BMI)) +
+  geom_point(alpha = 0.9) +
+  scale_color_manual(values = c(
+    "Low" = "green",
+    "Medium" = "orange",
+    "High" = "red",
+    "Critical" = "darkred"
+  )) +
+  scale_size_continuous(range = c(3, 10)) +
+  labs(title = "Age vs Blood Pressure",
+       subtitle = "Point size represents BMI and color represents disease severity",
+       x = "Age (years)",
+       y = "Blood Pressure (mmHg)",
+       color = "Disease Severity",
+       size = "BMI") +
+  theme_minimal()
+
+cat("Question 1 Interpretation:\\n")
+cat("- Age is mapped to the x-axis and Blood Pressure to the y-axis.\\n")
+cat("- Severity uses an ordered green-to-dark-red palette to indicate increasing health risk.\\n")
+cat("- BMI is represented by point size so larger points immediately highlight obesity-related risk.\\n\\n")
+
+############################################################
+# QUESTION 2 – Climate Science
+############################################################
+
+climate_data <- data.frame(
+  Month = factor(c("Jan","Feb","Mar","Apr","May","Jun",
+                   "Jul","Aug","Sep","Oct","Nov","Dec"),
+                 levels = c("Jan","Feb","Mar","Apr","May","Jun",
+                            "Jul","Aug","Sep","Oct","Nov","Dec")),
+  SolarRadiation = c(180,200,240,280,320,300,260,250,240,220,190,170),
+  Temperature = c(20,23,29,35,39,36,32,31,30,28,24,21),
+  Rainfall = c(25,18,12,8,5,65,150,170,120,85,45,30)
+)
+
+# Cartesian line chart for temperature
+ggplot(climate_data,
+       aes(x = Month,
+           y = Temperature,
+           group = 1)) +
+  geom_line(color = "blue", linewidth = 1.2) +
+  geom_point(color = "darkblue", size = 3) +
+  labs(title = "Monthly Temperature Variation",
+       x = "Month",
+       y = "Temperature (°C)") +
+  theme_minimal()
+
+# Polar coordinate chart for rainfall
+ggplot(climate_data,
+       aes(x = Month,
+           y = Rainfall,
+           fill = Rainfall)) +
+  geom_col(color = "white") +
+  coord_polar() +
+  scale_fill_viridis_c(option = "C") +
+  labs(title = "Annual Rainfall Distribution (Polar Chart)",
+       fill = "Rainfall (mm)") +
+  theme_minimal()
+
+cat("Question 2 Comparison:\\n")
+cat("- Cartesian charts are better for identifying exact monthly temperature trends.\\n")
+cat("- Polar charts emphasize cyclical annual rainfall patterns and seasonal concentration.\\n")
+cat("- Limitation: polar charts make precise value comparison more difficult than Cartesian charts.\\n\\n")
+
+############################################################
+# QUESTION 3 – Business Analytics & Marketing
+############################################################
+
+business_data <- data.frame(
+  Product = c("A","B","C","D","E"),
+  Sales = c(210,185,260,145,120),
+  Profit = c(18,14,25,12,10),
+  MarketShare = c(24,20,28,15,13)
+)
+
+# Highlight highest market share product
+business_data$Highlight <- ifelse(
+  business_data$MarketShare == max(business_data$MarketShare),
+  "Highest",
+  "Normal"
+)
+
+ggplot(business_data,
+       aes(x = Product,
+           y = Sales,
+           fill = Profit)) +
+  geom_col(color = "black", width = 0.7) +
+  geom_col(data = subset(business_data, Highlight == "Highest"),
+           fill = "gold",
+           color = "black",
+           width = 0.7) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +
+  labs(title = "Product Sales and Profit Analysis",
+       subtitle = "Gold bar highlights the highest market share product",
+       x = "Product",
+       y = "Sales (₹ Lakhs)",
+       fill = "Profit (%)") +
+  theme_minimal()
+
+cat("Question 3 Interpretation:\\n")
+cat("- Bar height represents sales volume.\\n")
+cat("- Sequential light-to-dark blue shows increasing profit percentage.\\n")
+cat("- Product C is highlighted in gold because it has the highest market share.\\n")
+cat("- The palette helps managers quickly identify products with both high sales and high profitability.\\n\\n")
+
+############################################################
+# QUESTION 4 – Transportation Engineering
+############################################################
+
+traffic_data <- data.frame(
+  Direction = factor(c("North","North-East","East","South-East",
+                       "South","South-West","West","North-West"),
+                     levels = c("North","North-East","East","South-East",
+                                "South","South-West","West","North-West")),
+  Vehicles = c(980,760,1240,890,1420,1130,860,720)
+)
+
+ggplot(traffic_data,
+       aes(x = Direction,
+           y = Vehicles,
+           fill = Vehicles)) +
+  geom_col(color = "white") +
+  coord_polar() +
+  scale_fill_viridis_c(option = "D") +
+  labs(title = "Directional Traffic Flow Analysis",
+       subtitle = "Polar chart showing traffic density by direction",
+       fill = "Vehicles/hour") +
+  theme_minimal()
+
+cat("Question 4 Interpretation:\\n")
+cat("- The polar chart matches the circular nature of compass directions.\\n")
+cat("- Color intensity represents traffic density, making congested directions stand out immediately.\\n")
+cat("- South has the highest traffic flow, followed by East and South-West.\\n")
+cat("- A Cartesian bar chart shows magnitude well, but a polar chart is more suitable for directional traffic analysis because it preserves the spatial relationship between compass directions.\\n")
