@@ -1,0 +1,106 @@
+# =====================================================
+# CASE STUDY 4 – Smart City Traffic Monitoring
+# ALL OUTPUTS IN ONE WINDOW
+# =====================================================
+
+# -----------------------------------------------------
+# Sample Dataset
+# -----------------------------------------------------
+junction <- c("J1", "J2", "J3", "J4", "J5")
+vehicle_count <- c(250, 420, 380, 550, 300)
+
+hours <- c(6, 9, 12, 15, 18, 21)
+traffic_trend <- c(120, 280, 240, 350, 500, 180)
+
+vehicle_types <- c(55, 30, 10, 5)
+type_labels <- c("Car", "Bike", "Bus", "Truck")
+
+average_speed <- c(60, 45, 50, 35, 55)
+
+# GPS Coordinates (sample values)
+longitude <- c(77.10, 77.15, 77.20, 77.25, 77.30)
+latitude  <- c(28.60, 28.62, 28.64, 28.66, 28.68)
+
+# -----------------------------------------------------
+# Arrange all graphs in one window
+# -----------------------------------------------------
+par(mfrow = c(3,2), mar = c(4,4,3,1))
+
+# =====================================================
+# 1. BAR PLOT – Vehicle Count Comparison
+# =====================================================
+barplot(vehicle_count,
+        names.arg = junction,
+        col = "skyblue",
+        main = "Vehicle Count Comparison",
+        xlab = "Junction",
+        ylab = "Vehicle Count")
+
+# =====================================================
+# 2. LINE CHART – Hourly Traffic Trend
+# =====================================================
+plot(hours, traffic_trend,
+     type = "l",
+     lwd = 2,
+     col = "darkgreen",
+     main = "Hourly Traffic Trend",
+     xlab = "Hour of Day",
+     ylab = "Traffic Volume")
+
+points(hours, traffic_trend, pch = 19, col = "blue")
+
+# =====================================================
+# 3. PIE CHART – Vehicle Type Proportion
+# =====================================================
+pie(vehicle_types,
+    labels = type_labels,
+    col = rainbow(4),
+    main = "Vehicle Type Proportion")
+
+# =====================================================
+# 4. GEOSPATIAL MAP – Traffic Density by Location
+# =====================================================
+plot(longitude, latitude,
+     pch = 19,
+     cex = vehicle_count / 120,
+     col = "red",
+     main = "Traffic Density by Location",
+     xlab = "Longitude",
+     ylab = "Latitude")
+
+text(longitude, latitude, labels = junction, pos = 3)
+
+# =====================================================
+# 5. SCATTER PLOT – Traffic Volume vs Average Speed
+# =====================================================
+plot(vehicle_count, average_speed,
+     pch = 19,
+     col = "purple",
+     main = "Traffic Volume vs Average Speed",
+     xlab = "Traffic Volume",
+     ylab = "Average Speed (km/h)")
+
+abline(lm(average_speed ~ vehicle_count),
+       col = "darkblue",
+       lwd = 2)
+
+# =====================================================
+# 6. TRAFFIC DENSITY VISUALIZATION
+# =====================================================
+barplot(sort(vehicle_count, decreasing = TRUE),
+        col = "orange",
+        main = "Traffic Density Ranking",
+        xlab = "Junctions",
+        ylab = "Vehicle Count")
+
+# =====================================================
+# INTERPRETATION OUTPUTS
+# =====================================================
+cat("Highest Congestion Junction : ",
+    junction[which.max(vehicle_count)], "\n")
+
+cat("Peak Traffic Hour : ",
+    hours[which.max(traffic_trend)], ":00 hrs\n")
+
+cat("Correlation between Traffic Volume and Average Speed : ",
+    round(cor(vehicle_count, average_speed), 2), "\n")
