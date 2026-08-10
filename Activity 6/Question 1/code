@@ -1,0 +1,33 @@
+install.packages("ggplot2")
+library(ggplot2)
+
+sales <- data.frame(
+  Month = c("January", "February", "March", "April", "May", "June"),
+  Sales = c(95, 97, 99, 101, 103, 105)
+)
+
+print(sales)
+
+ggplot(sales, aes(x = Month, y = Sales)) +
+  geom_bar(stat = "identity", fill = "red") +
+  ylim(90, 110) +
+  labs(
+    title = "Misleading Sales Chart",
+    x = "Month",
+    y = "Sales (₹ Lakhs)"
+  )
+
+ggplot(sales, aes(x = Month, y = Sales)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  ylim(0, 110) +
+  labs(
+    title = "Improved Sales Chart",
+    x = "Month",
+    y = "Sales (₹ Lakhs)"
+  )
+
+cat("Business Impact:\\n")
+cat("Managers may believe sales growth is very large.\\n")
+cat("They may increase production unnecessarily.\\n")
+cat("Marketing budgets may be increased without justification.\\n")
+cat("This can lead to incorrect planning and resource allocation.\\n")
