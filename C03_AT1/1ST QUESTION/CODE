@@ -1,0 +1,97 @@
+# ============================================================
+# QUESTION 1
+# ECDF AND NORMAL Q-Q PLOT
+# ============================================================
+
+# Dataset
+response_time <- c(
+  118, 121, 125, 127, 129,
+  131, 134, 136, 138, 141,
+  144, 147, 151, 156, 162,
+  171, 184, 205, 249, 318
+)
+
+# Display data
+print(response_time)
+
+# ------------------------------------------------------------
+# 1. ECDF
+# ------------------------------------------------------------
+
+plot(
+  ecdf(response_time),
+  main = "ECDF of Fault Detection Response Time",
+  xlab = "Response Time (ms)",
+  ylab = "Cumulative Probability",
+  verticals = TRUE,
+  do.points = TRUE
+)
+
+# ------------------------------------------------------------
+# 2. Normal Q-Q Plot
+# ------------------------------------------------------------
+
+qqnorm(
+  response_time,
+  main = "Normal Q-Q Plot of Response Time"
+)
+
+qqline(
+  response_time,
+  col = "red",
+  lwd = 2
+)
+
+# ------------------------------------------------------------
+# 3. Mean and Standard Deviation
+# ------------------------------------------------------------
+
+mean_value <- mean(response_time)
+sd_value <- sd(response_time)
+
+cat("Mean =", mean_value, "ms\n")
+cat("Standard Deviation =", sd_value, "ms\n")
+
+# Mean +/- SD limits
+lower_limit <- mean_value - sd_value
+upper_limit <- mean_value + sd_value
+
+cat("Mean - SD =", lower_limit, "ms\n")
+cat("Mean + SD =", upper_limit, "ms\n")
+
+# ------------------------------------------------------------
+# 4. Percentile-based limits
+# ------------------------------------------------------------
+
+percentiles <- quantile(
+  response_time,
+  probs = c(0.05, 0.25, 0.50, 0.75, 0.95)
+)
+
+print(percentiles)
+
+cat("5th Percentile =", percentiles[1], "ms\n")
+cat("25th Percentile =", percentiles[2], "ms\n")
+cat("Median =", percentiles[3], "ms\n")
+cat("75th Percentile =", percentiles[4], "ms\n")
+cat("95th Percentile =", percentiles[5], "ms\n")
+
+# ------------------------------------------------------------
+# 5. Skewness
+# ------------------------------------------------------------
+
+# Skewness using Pearson's moment coefficient
+skewness_value <- mean(
+  (response_time - mean(response_time))^3
+) / sd(response_time)^3
+
+cat("Skewness =", skewness_value, "\n")
+
+# ------------------------------------------------------------
+# Conclusion
+# ------------------------------------------------------------
+
+cat("\nCONCLUSION:\n")
+cat("The distribution is positively/right skewed.\n")
+cat("The observations 205, 249 and 318 ms indicate a long right tail.\n")
+cat("Percentile-based limits are recommended because they are less affected by extreme observations.\n")
