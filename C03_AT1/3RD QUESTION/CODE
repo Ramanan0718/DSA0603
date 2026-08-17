@@ -1,0 +1,99 @@
+# ============================================================
+# QUESTION 3
+# PROPORTION VISUALIZATION
+# ============================================================
+
+# Dataset
+learning <- data.frame(
+  Department = c("CSE", "ECE", "IT"),
+  Online = c(52, 45, 30),
+  Blended = c(28, 35, 40),
+  Face_to_Face = c(20, 20, 30)
+)
+
+print(learning)
+
+# ------------------------------------------------------------
+# Required package
+# ------------------------------------------------------------
+
+if (!require(ggplot2)) {
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+# ------------------------------------------------------------
+# Convert to long format
+# ------------------------------------------------------------
+
+learning_long <- data.frame(
+  Department = rep(learning$Department, each = 3),
+  Mode = rep(
+    c("Online", "Blended", "Face-to-Face"),
+    times = 3
+  ),
+  Percentage = c(
+    learning$Online,
+    learning$Blended,
+    learning$Face_to_Face
+  )
+)
+
+print(learning_long)
+
+# ------------------------------------------------------------
+# 1. Side-by-side bar chart
+# ------------------------------------------------------------
+
+ggplot(
+  learning_long,
+  aes(x = Department, y = Percentage, fill = Mode)
+) +
+  geom_bar(
+    stat = "identity",
+    position = "dodge"
+  ) +
+  labs(
+    title = "Preferred Learning Mode by Department",
+    x = "Department",
+    y = "Percentage"
+  ) +
+  theme_minimal()
+
+# ------------------------------------------------------------
+# 2. 100% stacked bar chart
+# ------------------------------------------------------------
+
+ggplot(
+  learning_long,
+  aes(x = Department, y = Percentage, fill = Mode)
+) +
+  geom_bar(
+    stat = "identity",
+    position = "fill"
+  ) +
+  scale_y_continuous(
+    labels = function(x) paste0(x * 100, "%")
+  ) +
+  labs(
+    title = "100% Stacked Bar Chart of Learning Mode",
+    x = "Department",
+    y = "Percentage"
+  ) +
+  theme_minimal()
+
+# ------------------------------------------------------------
+# 3. Print percentages
+# ------------------------------------------------------------
+
+print(learning)
+
+# ------------------------------------------------------------
+# Conclusion
+# ------------------------------------------------------------
+
+cat("\nCONCLUSION:\n")
+cat("The side-by-side bar chart is better for comparing individual proportions.\n")
+cat("The 100% stacked chart is useful for understanding departmental composition.\n")
+cat("Separate pie charts make cross-department comparison more difficult.\n")
+cat("Truncating the y-axis can exaggerate small proportional differences.\n")
