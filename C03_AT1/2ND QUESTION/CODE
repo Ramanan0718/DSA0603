@@ -1,0 +1,115 @@
+# ============================================================
+# QUESTION 2
+# COMPARING MANY DISTRIBUTIONS
+# ============================================================
+
+# Dataset
+L1 <- c(42, 44, 45, 46, 47, 48, 49, 50, 51, 53)
+L2 <- c(38, 41, 44, 47, 50, 53, 56, 59, 62, 65)
+L3 <- c(45, 46, 46, 47, 47, 48, 48, 49, 49, 50)
+L4 <- c(40, 41, 42, 43, 44, 45, 48, 55, 61, 72)
+
+# Combine data
+cycle_time <- c(L1, L2, L3, L4)
+
+line <- factor(
+  c(
+    rep("L1", length(L1)),
+    rep("L2", length(L2)),
+    rep("L3", length(L3)),
+    rep("L4", length(L4))
+  )
+)
+
+data2 <- data.frame(
+  Line = line,
+  CycleTime = cycle_time
+)
+
+print(data2)
+
+# ------------------------------------------------------------
+# 1. Boxplot comparing all distributions
+# ------------------------------------------------------------
+
+boxplot(
+  CycleTime ~ Line,
+  data = data2,
+  main = "Cycle Time Distribution by Production Line",
+  xlab = "Production Line",
+  ylab = "Cycle Time (minutes)"
+)
+
+# ------------------------------------------------------------
+# 2. Strip plot / Bean-plot equivalent
+# ------------------------------------------------------------
+
+stripchart(
+  CycleTime ~ Line,
+  data = data2,
+  method = "jitter",
+  vertical = TRUE,
+  pch = 19,
+  main = "Bean-Plot Equivalent: Cycle Time Distribution",
+  xlab = "Production Line",
+  ylab = "Cycle Time (minutes)"
+)
+
+# Add mean points
+means <- tapply(data2$CycleTime, data2$Line, mean)
+
+points(
+  1:4,
+  means,
+  pch = 18,
+  cex = 1.5
+)
+
+# ------------------------------------------------------------
+# 3. Summary statistics
+# ------------------------------------------------------------
+
+summary_table <- data.frame(
+  Line = c("L1", "L2", "L3", "L4"),
+  Mean = c(mean(L1), mean(L2), mean(L3), mean(L4)),
+  SD = c(sd(L1), sd(L2), sd(L3), sd(L4)),
+  Minimum = c(min(L1), min(L2), min(L3), min(L4)),
+  Maximum = c(max(L1), max(L2), max(L3), max(L4)),
+  Range = c(
+    max(L1) - min(L1),
+    max(L2) - min(L2),
+    max(L3) - min(L3),
+    max(L4) - min(L4)
+  )
+)
+
+print(summary_table)
+
+# ------------------------------------------------------------
+# 4. Determine greatest variability
+# ------------------------------------------------------------
+
+range_values <- summary_table$Range
+
+greatest_variability <- summary_table$Line[
+  which.max(range_values)
+]
+
+most_concentrated <- summary_table$Line[
+  which.min(range_values)
+]
+
+cat("\nGreatest variability based on range:",
+    greatest_variability, "\n")
+
+cat("Most concentrated distribution based on range:",
+    most_concentrated, "\n")
+
+# ------------------------------------------------------------
+# Conclusion
+# ------------------------------------------------------------
+
+cat("\nCONCLUSION:\n")
+cat("L2 has the largest range and therefore the greatest overall spread.\n")
+cat("L3 has the smallest range and is the most concentrated.\n")
+cat("Means alone cannot describe variability, spread or distribution shape.\n")
