@@ -1,0 +1,216 @@
+# ============================================================
+# QUESTION 5
+# SANKEY DIAGRAM AND PARALLEL SETS
+# ============================================================
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+
+mobility <- data.frame(
+  Origin = c(
+    "Residential", "Residential",
+    "Residential", "Residential",
+    "Suburban", "Suburban",
+    "Suburban", "Suburban",
+    "Rural", "Rural",
+    "Rural", "Rural"
+  ),
+  
+  Mode = c(
+    "Bus", "Bus",
+    "Train", "Train",
+    "Bus", "Bus",
+    "Train", "Train",
+    "Bus", "Bus",
+    "Train", "Train"
+  ),
+  
+  Destination = c(
+    "Central", "Industrial",
+    "Central", "Industrial",
+    "Central", "Industrial",
+    "Central", "Industrial",
+    "Central", "Industrial",
+    "Central", "Industrial"
+  ),
+  
+  Commuters = c(
+    35, 15,
+    25, 10,
+    20, 10,
+    30, 15,
+    12, 8,
+    10, 10
+  )
+)
+
+print(mobility)
+
+# ------------------------------------------------------------
+# Total commuters
+# ------------------------------------------------------------
+
+total_commuters <- sum(mobility$Commuters)
+
+cat("Total commuters =", total_commuters, "\n")
+
+# ------------------------------------------------------------
+# 1. Find three largest flows
+# ------------------------------------------------------------
+
+largest_flows <- mobility[
+  order(-mobility$Commuters),
+]
+
+largest_three <- head(largest_flows, 3)
+
+print(largest_three)
+
+# Calculate percentages
+largest_three$Percentage <-
+  (largest_three$Commuters / total_commuters) * 100
+
+print(largest_three)
+
+# ------------------------------------------------------------
+# 2. Sankey Diagram
+# ------------------------------------------------------------
+
+if (!require(networkD3)) {
+  install.packages("networkD3")
+  library(networkD3)
+}
+
+# Create nodes
+nodes <- data.frame(
+  name = unique(c(
+    mobility$Origin,
+    mobility$Mode,
+    mobility$Destination
+  ))
+)
+
+print(nodes)
+
+# Function to find node index
+get_index <- function(x) {
+  match(x, nodes$name) - 1
+}
+
+# Origin -> Mode links
+origin_mode <- aggregate(
+  Commuters ~ Origin + Mode,
+  data = mobility,
+  FUN = sum
+)
+
+links1 <- data.frame(
+  source = get_index(origin_mode$Origin),
+  target = get_index(origin_mode$Mode),
+  value = origin_mode$Commuters
+)
+
+# Mode -> Destination links
+mode_destination <- aggregate(
+  Commuters ~ Mode + Destination,
+  data = mobility,
+  FUN = sum
+)
+
+links2 <- data.frame(
+  source = get_index(mode_destination$Mode),
+  target = get_index(mode_destination$Destination),
+  value = mode_destination$Commuters
+)
+
+# Combine links
+links <- rbind(links1, links2)
+
+print(links)
+
+# Create Sankey diagram
+sankeyNetwork(
+  Links = links,
+  Nodes = nodes,
+  Source = "source",
+  Target = "target",
+  Value = "value",
+  NodeID = "name",
+  fontSize = 14,
+  nodeWidth = 30
+)
+
+# ------------------------------------------------------------
+# 3. Parallel Sets Representation
+# ------------------------------------------------------------
+
+if (!require(ggplot2)) {
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+if (!require(ggalluvial)) {
+  install.packages("ggalluvial")
+  library(ggalluvial)
+}
+
+ggplot(
+  mobility,
+  aes(
+    axis1 = Origin,
+    axis2 = Mode,
+    axis3 = Destination,
+    y = Commuters
+  )
+) +
+  geom_alluvium(aes(fill = Mode), width = 1/12) +
+  geom_stratum(width = 1/8) +
+  geom_text(
+    stat = "stratum",
+    aes(label = after_stat(stratum))
+  ) +
+  scale_x_discrete(
+    limits = c("Origin", "Mode", "Destination"),
+    expand = c(.05, .05)
+  ) +
+  labs(
+    title = "Parallel Sets Representation of Commuter Flows",
+    x = "Category",
+    y = "Number of Commuters"
+  ) +
+  theme_minimal()
+
+# ------------------------------------------------------------
+# 4. Display top three flows
+# ------------------------------------------------------------
+
+cat("\nTOP THREE FLOWS:\n")
+
+for (i in 1:nrow(largest_three)) {
+  
+  cat(
+    i, ". ",
+    largest_three$Origin[i],
+    " -> ",
+    largest_three$Mode[i],
+    " -> ",
+    largest_three$Destination[i],
+    " = ",
+    largest_three$Commuters[i],
+    " commuters (",
+    largest_three$Percentage[i],
+    "%)\n",
+    sep = ""
+  )
+}
+
+# ------------------------------------------------------------
+# Conclusion
+# ------------------------------------------------------------
+
+cat("\nCONCLUSION:\n")
+cat("The Sankey diagram clearly represents the magnitude of commuter flows.\n")
+cat("The parallel-sets diagram highlights relationships between origin, mode and destination.\n")
+cat("Poor link widths can exaggerate or reduce perceived flow magnitude.\n")
+cat("Poor category ordering can also make relationships difficult to interpret.\n")
