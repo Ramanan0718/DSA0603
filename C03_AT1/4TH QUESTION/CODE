@@ -1,0 +1,121 @@
+# ============================================================
+# QUESTION 4
+# TREEMAP AND SUNBURST
+# ============================================================
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+
+revenue <- data.frame(
+  Category = c(
+    "Electronics", "Electronics", "Electronics",
+    "Home", "Home", "Home",
+    "Fashion", "Fashion", "Fashion"
+  ),
+  
+  Subcategory = c(
+    "Mobiles", "Laptops", "Accessories",
+    "Furniture", "Appliances", "Decor",
+    "Men", "Women", "Kids"
+  ),
+  
+  Revenue = c(
+    24, 18, 8,
+    14, 10, 6,
+    7, 8, 5
+  )
+)
+
+print(revenue)
+
+# ------------------------------------------------------------
+# Calculate total and category revenue
+# ------------------------------------------------------------
+
+total_revenue <- sum(revenue$Revenue)
+
+category_total <- aggregate(
+  Revenue ~ Category,
+  data = revenue,
+  FUN = sum
+)
+
+print(category_total)
+
+# Largest category
+largest_category <- category_total$Category[
+  which.max(category_total$Revenue)
+]
+
+largest_revenue <- max(category_total$Revenue)
+
+largest_percentage <-
+  (largest_revenue / total_revenue) * 100
+
+cat("\nTotal revenue from supplied data =",
+    total_revenue, "lakh\n")
+
+cat("Largest category =",
+    largest_category, "\n")
+
+cat("Largest category revenue =",
+    largest_revenue, "lakh\n")
+
+cat("Largest category percentage =",
+    largest_percentage, "%\n")
+
+# ------------------------------------------------------------
+# 1. Treemap
+# ------------------------------------------------------------
+
+if (!require(treemap)) {
+  install.packages("treemap")
+  library(treemap)
+}
+
+treemap(
+  revenue,
+  index = c("Category", "Subcategory"),
+  vSize = "Revenue",
+  type = "index",
+  title = "E-Commerce Revenue Treemap"
+)
+
+# ------------------------------------------------------------
+# 2. Sunburst Chart
+# ------------------------------------------------------------
+
+if (!require(plotly)) {
+  install.packages("plotly")
+  library(plotly)
+}
+
+sunburst_data <- revenue
+
+fig <- plot_ly(
+  data = sunburst_data,
+  ids = ~Subcategory,
+  labels = ~Subcategory,
+  parents = ~Category,
+  values = ~Revenue,
+  type = "sunburst"
+)
+
+fig <- fig %>%
+  layout(
+    title = "E-Commerce Revenue Sunburst Chart"
+  )
+
+fig
+
+# ------------------------------------------------------------
+# Conclusion
+# ------------------------------------------------------------
+
+cat("\nCONCLUSION:\n")
+cat("Electronics is the largest category with 50 lakh revenue.\n")
+cat("Based on the supplied table, Electronics contributes 50% of total revenue.\n")
+cat("The treemap is useful for comparing area and category contribution.\n")
+cat("The sunburst is useful for understanding hierarchical relationships.\n")
+cat("Area encoding may be misleading when differently shaped rectangles are compared.\n")
