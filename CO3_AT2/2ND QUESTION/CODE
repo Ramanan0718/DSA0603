@@ -1,0 +1,107 @@
+# ==========================================
+# QUESTION 2
+# BEAN PLOT / DENSITY + JITTER
+# ==========================================
+
+library(ggplot2)
+
+# -----------------------------
+# Create data
+# -----------------------------
+
+department <- c(
+  rep("Cardiology", 10),
+  rep("Orthopedics", 10),
+  rep("Pediatrics", 10),
+  rep("Dermatology", 10),
+  rep("General Medicine", 10)
+)
+
+waiting_time <- c(
+  10,12,13,14,15,15,16,17,18,20,
+  8,9,25,26,27,9,10,28,29,8,
+  5,6,6,7,7,8,8,9,9,10,
+  15,16,17,18,19,20,21,22,23,24,
+  10,40,12,38,11,41,13,39,12,40
+)
+
+data2 <- data.frame(
+  Department = department,
+  WaitingTime = waiting_time
+)
+
+# -----------------------------
+# 1. Bean-like plot
+# Density + jitter
+# -----------------------------
+
+ggplot(data2, aes(
+  x = Department,
+  y = WaitingTime
+)) +
+  geom_violin(trim = FALSE, alpha = 0.4) +
+  geom_jitter(
+    width = 0.08,
+    size = 2
+  ) +
+  labs(
+    title = "Bean-Style Plot of Department Waiting Times",
+    x = "Department",
+    y = "Waiting Time (minutes)"
+  ) +
+  theme_minimal()
+
+# -----------------------------
+# 2. Standard Boxplot
+# -----------------------------
+
+ggplot(data2, aes(
+  x = Department,
+  y = WaitingTime
+)) +
+  geom_boxplot() +
+  labs(
+    title = "Boxplot of Waiting Times",
+    x = "Department",
+    y = "Waiting Time (minutes)"
+  ) +
+  theme_minimal()
+
+# -----------------------------
+# 3. Calculate variability
+# -----------------------------
+
+summary_data <- aggregate(
+  WaitingTime ~ Department,
+  data = data2,
+  FUN = function(x) c(
+    Mean = mean(x),
+    Median = median(x),
+    SD = sd(x),
+    Range = max(x) - min(x)
+  )
+)
+
+print(summary_data)
+
+# -----------------------------
+# Separate ranking table
+# -----------------------------
+
+median_values <- tapply(
+  data2$WaitingTime,
+  data2$Department,
+  median
+)
+
+sd_values <- tapply(
+  data2$WaitingTime,
+  data2$Department,
+  sd
+)
+
+cat("\nMedian Ranking:\n")
+print(sort(median_values))
+
+cat("\nVariability Ranking using SD:\n")
+print(sort(sd_values, decreasing = TRUE))
