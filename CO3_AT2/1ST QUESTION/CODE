@@ -1,0 +1,100 @@
+# ==========================================
+# QUESTION 1
+# ECDF AND Q-Q PLOTS
+# ==========================================
+
+# Install packages if required
+# install.packages("ggplot2")
+
+library(ggplot2)
+
+# -----------------------------
+# Create the data
+# -----------------------------
+
+partner_A <- c(18, 19, 20, 20, 21, 21, 22, 22, 23, 23,
+               24, 24, 25, 26, 27, 28, 30, 33, 38, 46)
+
+partner_B <- c(20, 21, 22, 22, 23, 23, 23, 24, 24, 24,
+               24, 25, 25, 25, 26, 26, 27, 27, 28, 29)
+
+delivery_data <- data.frame(
+  Time = c(partner_A, partner_B),
+  Partner = factor(
+    c(rep("Partner A", 20), rep("Partner B", 20))
+  )
+)
+
+# -----------------------------
+# 1. Overlaid ECDF Plot
+# -----------------------------
+
+ggplot(delivery_data, aes(x = Time, color = Partner)) +
+  stat_ecdf(linewidth = 1.2) +
+  labs(
+    title = "ECDF of Delivery Times",
+    x = "Delivery Time (hours)",
+    y = "Cumulative Proportion"
+  ) +
+  theme_minimal()
+
+# -----------------------------
+# 2. Q-Q Plot for Partner A
+# -----------------------------
+
+qqnorm(
+  partner_A,
+  main = "Normal Q-Q Plot - Partner A",
+  xlab = "Theoretical Quantiles",
+  ylab = "Sample Quantiles"
+)
+
+qqline(partner_A)
+
+# -----------------------------
+# Q-Q Plot for Partner B
+# -----------------------------
+
+qqnorm(
+  partner_B,
+  main = "Normal Q-Q Plot - Partner B",
+  xlab = "Theoretical Quantiles",
+  ylab = "Sample Quantiles"
+)
+
+qqline(partner_B)
+
+# -----------------------------
+# 3. Find ECDF maximum difference
+# -----------------------------
+
+all_times <- sort(unique(c(partner_A, partner_B)))
+
+ecdf_A <- ecdf(partner_A)
+ecdf_B <- ecdf(partner_B)
+
+difference <- abs(ecdf_A(all_times) - ecdf_B(all_times))
+
+result <- data.frame(
+  Time = all_times,
+  ECDF_A = ecdf_A(all_times),
+  ECDF_B = ecdf_B(all_times),
+  Difference = difference
+)
+
+print(result)
+
+cat("\nMaximum ECDF difference:\n")
+print(result[which.max(result$Difference), ])
+
+# -----------------------------
+# 4. Summary statistics
+# -----------------------------
+
+cat("\nPartner A Mean:", mean(partner_A))
+cat("\nPartner A SD:", sd(partner_A))
+cat("\nPartner A Median:", median(partner_A))
+
+cat("\n\nPartner B Mean:", mean(partner_B))
+cat("\nPartner B SD:", sd(partner_B))
+cat("\nPartner B Median:", median(partner_B))
