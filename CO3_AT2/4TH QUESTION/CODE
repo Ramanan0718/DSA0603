@@ -1,0 +1,198 @@
+# ============================================================
+# QUESTION 4
+# HOUSEHOLD BUDGET - TREEMAP + SUNBURST
+# ============================================================
+
+# Install packages if required:
+# install.packages("treemap")
+# install.packages("plotly")
+
+library(treemap)
+library(plotly)
+
+# ------------------------------------------------------------
+# 1. CREATE HOUSEHOLD BUDGET DATA
+# ------------------------------------------------------------
+
+budget <- data.frame(
+
+  Category = c(
+    "Housing", "Housing", "Housing",
+    "Food", "Food",
+    "Transport", "Transport",
+    "Savings", "Savings",
+    "Discretionary", "Discretionary"
+  ),
+
+  Subcategory = c(
+    "Rent/EMI",
+    "Utilities",
+    "Maintenance",
+    "Groceries",
+    "Dining Out",
+    "Fuel",
+    "Public Transit",
+    "Investments",
+    "Emergency Fund",
+    "Entertainment",
+    "Shopping"
+  ),
+
+  Amount = c(
+    18000,
+    4000,
+    2000,
+    9000,
+    3000,
+    3500,
+    1500,
+    10000,
+    4000,
+    3000,
+    2000
+  )
+)
+
+# ------------------------------------------------------------
+# 2. TREEMAP
+# ------------------------------------------------------------
+
+treemap(
+  budget,
+  index = c("Category", "Subcategory"),
+  vSize = "Amount",
+  type = "index",
+  title = "Household Budget Treemap"
+)
+
+# ------------------------------------------------------------
+# 3. SUNBURST DATA
+# ------------------------------------------------------------
+
+sunburst_data <- data.frame(
+
+  ids = c(
+    "Total Budget",
+
+    "Housing",
+    "Food",
+    "Transport",
+    "Savings",
+    "Discretionary",
+
+    "Rent/EMI",
+    "Utilities",
+    "Maintenance",
+
+    "Groceries",
+    "Dining Out",
+
+    "Fuel",
+    "Public Transit",
+
+    "Investments",
+    "Emergency Fund",
+
+    "Entertainment",
+    "Shopping"
+  ),
+
+  labels = c(
+    "₹60,000",
+
+    "Housing",
+    "Food",
+    "Transport",
+    "Savings",
+    "Discretionary",
+
+    "Rent/EMI",
+    "Utilities",
+    "Maintenance",
+
+    "Groceries",
+    "Dining Out",
+
+    "Fuel",
+    "Public Transit",
+
+    "Investments",
+    "Emergency Fund",
+
+    "Entertainment",
+    "Shopping"
+  ),
+
+  parents = c(
+    "",
+
+    "Total Budget",
+    "Total Budget",
+    "Total Budget",
+    "Total Budget",
+    "Total Budget",
+
+    "Housing",
+    "Housing",
+    "Housing",
+
+    "Food",
+    "Food",
+
+    "Transport",
+    "Transport",
+
+    "Savings",
+    "Savings",
+
+    "Discretionary",
+    "Discretionary"
+  ),
+
+  values = c(
+    60000,
+
+    24000,
+    12000,
+    5000,
+    14000,
+    5000,
+
+    18000,
+    4000,
+    2000,
+
+    9000,
+    3000,
+
+    3500,
+    1500,
+
+    10000,
+    4000,
+
+    3000,
+    2000
+  )
+)
+
+# ------------------------------------------------------------
+# 4. SUNBURST CHART
+# ------------------------------------------------------------
+
+sunburst_chart <- plot_ly(
+  data = sunburst_data,
+  ids = ~ids,
+  labels = ~labels,
+  parents = ~parents,
+  values = ~values,
+  type = "sunburst",
+  branchvalues = "total"
+)
+
+sunburst_chart <- sunburst_chart %>%
+  layout(
+    title = "Household Budget Sunburst Chart"
+  )
+
+sunburst_chart
