@@ -1,0 +1,227 @@
+# ==========================================
+# QUESTION 5
+# SANKEY DIAGRAM AND PARALLEL SETS
+# ==========================================
+
+# Install packages if required:
+# install.packages("networkD3")
+# install.packages("ggalluvial")
+# install.packages("ggplot2")
+
+library(networkD3)
+library(ggalluvial)
+library(ggplot2)
+
+# -----------------------------
+# Create data
+# -----------------------------
+
+flow_data <- data.frame(
+  Course = c(
+    "Data Science",
+    "Data Science",
+    "Data Science",
+    "Data Science",
+    "Web Development",
+    "Web Development",
+    "Web Development",
+    "Web Development",
+    "Digital Marketing",
+    "Digital Marketing",
+    "Digital Marketing",
+    "Digital Marketing"
+  ),
+
+  Device = c(
+    "Mobile", "Mobile",
+    "Laptop", "Laptop",
+    "Mobile", "Mobile",
+    "Laptop", "Laptop",
+    "Mobile", "Mobile",
+    "Laptop", "Laptop"
+  ),
+
+  Status = c(
+    "Completed", "Dropped",
+    "Completed", "Dropped",
+    "Completed", "Dropped",
+    "Completed", "Dropped",
+    "Completed", "Dropped",
+    "Completed", "Dropped"
+  ),
+
+  Students = c(
+    20, 25,
+    45, 10,
+    15, 20,
+    35, 10,
+    10, 15,
+    20, 25
+  )
+)
+
+# Check total
+cat("Total Students:",
+    sum(flow_data$Students), "\n")
+
+# -----------------------------
+# 1. Sankey Diagram
+# -----------------------------
+
+nodes <- data.frame(
+  name = unique(c(
+    flow_data$Course,
+    flow_data$Device,
+    flow_data$Status
+  ))
+)
+
+# Course -> Device links
+links1 <- aggregate(
+  Students ~ Course + Device,
+  data = flow_data,
+  sum
+)
+
+# Device -> Status links
+links2 <- aggregate(
+  Students ~ Device + Status,
+  data = flow_data,
+  sum
+)
+
+links <- rbind(
+  data.frame(
+    Source = links1$Course,
+    Target = links1$Device,
+    Value = links1$Students
+  ),
+  data.frame(
+    Source = links2$Device,
+    Target = links2$Status,
+    Value = links2$Students
+  )
+)
+
+links$source <- match(
+  links$Source,
+  nodes$name
+) - 1
+
+links$target <- match(
+  links$Target,
+  nodes$name
+) - 1
+
+sankeyNetwork(
+  Links = links,
+  Nodes = nodes,
+  Source = "source",
+  Target = "target",
+  Value = "Value",
+  NodeID = "name",
+  fontSize = 14,
+  nodeWidth = 30
+)
+
+# -----------------------------
+# 2. Parallel Sets / Alluvial
+# -----------------------------
+
+ggplot(
+  flow_data,
+  aes(
+    axis1 = Course,
+    axis2 = Device,
+    axis3 = Status,
+    y = Students
+  )
+) +
+  geom_alluvium(aes(fill = Course),
+                alpha = 0.7) +
+  geom_stratum() +
+  geom_text(
+    stat = "stratum",
+    aes(label = after_stat(stratum))
+  ) +
+  scale_x_discrete(
+    limits = c(
+      "Course",
+      "Device",
+      "Status"
+    )
+  ) +
+  labs(
+    title = "Parallel Sets: Course → Device → Completion",
+    x = "",
+    y = "Number of Students"
+  ) +
+  theme_minimal()
+
+# -----------------------------
+# 3. Calculate largest flows
+# -----------------------------
+
+flow_data$Percentage <-
+  (flow_data$Students / 250) * 100
+
+largest_flows <- flow_data[
+  order(
+    -flow_data$Students
+  ), 
+]
+
+cat("\nLargest Flows:\n")
+
+print(
+  largest_flows[
+    1:4,
+    c(
+      "Course",
+      "Device",
+      "Status",
+      "Students",
+      "Percentage"
+    )
+  ]
+)
+
+# -----------------------------
+# 4. Completion rate by course
+# -----------------------------
+
+completion_rate <- aggregate(
+  Students ~ Course + Status,
+  data = flow_data,
+  sum
+)
+
+print(completion_rate)
+
+# Calculate completion percentage
+courses <- unique(flow_data$Course)
+
+for (course in courses) {
+
+  total <- sum(
+    flow_data$Students[
+      flow_data$Course == course
+    ]
+  )
+
+  completed <- sum(
+    flow_data$Students[
+      flow_data$Course == course &
+      flow_data$Status == "Completed"
+    ]
+  )
+
+  rate <- completed / total * 100
+
+  cat(
+    "\n", course,
+    "Completion Rate =",
+    round(rate, 2),
+    "%"
+  )
+}
