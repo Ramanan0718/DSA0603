@@ -1,0 +1,104 @@
+# ==========================================
+# QUESTION 3
+# PROPORTION VISUALIZATION
+# ==========================================
+
+library(ggplot2)
+
+# -----------------------------
+# Create data
+# -----------------------------
+
+payment_data <- data.frame(
+  Store = c(
+    "Hypermarket",
+    "Supermarket",
+    "Convenience"
+  ),
+  Cash = c(18, 22, 35),
+  Card = c(34, 30, 25),
+  UPI_Wallet = c(48, 48, 40)
+)
+
+# Convert to long format
+payment_long <- data.frame(
+  Store = rep(payment_data$Store, each = 3),
+  Method = rep(
+    c("Cash", "Card", "UPI/Wallet"),
+    times = 3
+  ),
+  Percentage = c(
+    18,34,48,
+    22,30,48,
+    35,25,40
+  )
+)
+
+# -----------------------------
+# 1. Grouped Bar Chart
+# -----------------------------
+
+ggplot(
+  payment_long,
+  aes(
+    x = Store,
+    y = Percentage,
+    fill = Method
+  )
+) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Payment Method by Store Format",
+    x = "Store Format",
+    y = "Percentage"
+  ) +
+  theme_minimal()
+
+# -----------------------------
+# 2. 100% Stacked Bar Chart
+# -----------------------------
+
+ggplot(
+  payment_long,
+  aes(
+    x = Store,
+    y = Percentage,
+    fill = Method
+  )
+) +
+  geom_col(position = "fill") +
+  scale_y_continuous(
+    labels = function(x) paste0(x * 100, "%")
+  ) +
+  labs(
+    title = "100% Stacked Payment Method Distribution",
+    x = "Store Format",
+    y = "Percentage"
+  ) +
+  theme_minimal()
+
+# -----------------------------
+# 3. Three Pie Charts
+# -----------------------------
+
+par(mfrow = c(1, 3))
+
+pie(
+  c(18, 34, 48),
+  labels = c("Cash", "Card", "UPI/Wallet"),
+  main = "Hypermarket"
+)
+
+pie(
+  c(22, 30, 48),
+  labels = c("Cash", "Card", "UPI/Wallet"),
+  main = "Supermarket"
+)
+
+pie(
+  c(35, 25, 40),
+  labels = c("Cash", "Card", "UPI/Wallet"),
+  main = "Convenience"
+)
+
+par(mfrow = c(1, 1))
