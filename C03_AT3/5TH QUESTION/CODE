@@ -1,0 +1,53 @@
+# Install once
+# install.packages("networkD3")
+
+library(networkD3)
+
+# Dataset
+flow <- data.frame(
+  Course = c("Data Science","Data Science","Data Science",
+             "Web Development","Web Development","Web Development",
+             "Cloud Computing","Cloud Computing","Cloud Computing",
+             "UI/UX Design","UI/UX Design","UI/UX Design"),
+  Certification = c("Yes","Yes","No",
+                    "Yes","Yes","No",
+                    "Yes","Yes","No",
+                    "Yes","Yes","No"),
+  Job = c("Analyst","Engineer","Analyst",
+          "Frontend Dev","Backend Dev","Frontend Dev",
+          "DevOps Engineer","Cloud Analyst","Support Engineer",
+          "Product Designer","UX Researcher","Product Designer"),
+  Students = c(22,14,9,19,11,7,17,10,6,13,8,5)
+)
+
+# Create nodes
+nodes <- data.frame(name = unique(c(flow$Course,
+                                   flow$Certification,
+                                   flow$Job)))
+
+# Create links
+links1 <- data.frame(
+  source = match(flow$Course, nodes$name) - 1,
+  target = match(flow$Certification, nodes$name) - 1,
+  value = flow$Students
+)
+
+links2 <- data.frame(
+  source = match(flow$Certification, nodes$name) - 1,
+  target = match(flow$Job, nodes$name) - 1,
+  value = flow$Students
+)
+
+links <- rbind(links1, links2)
+
+# Sankey Diagram
+sankeyNetwork(
+  Links = links,
+  Nodes = nodes,
+  Source = "source",
+  Target = "target",
+  Value = "value",
+  NodeID = "name",
+  fontSize = 13,
+  nodeWidth = 30
+)
