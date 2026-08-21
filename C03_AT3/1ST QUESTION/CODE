@@ -1,0 +1,45 @@
+#-----------------------------
+# QUESTION 1
+# ECDF & Q-Q Plot
+#-----------------------------
+
+delivery <- data.frame(
+  Warehouse = c(rep("Chennai",5),rep("Bengaluru",5),
+                rep("Hyderabad",5),rep("Pune",5)),
+  Time = c(4,5,6,7,9,3,5,6,8,10,6,7,8,12,15,4,6,8,9,22)
+)
+
+# Original Style
+par(mfrow=c(1,2))
+
+plot(ecdf(delivery$Time),
+     main="Original ECDF",
+     col="red",
+     lwd=2)
+
+qqnorm(delivery$Time,
+       main="Original Q-Q",
+       pch=16,
+       col="blue")
+
+# Redesigned
+par(mfrow=c(1,2))
+
+plot(ecdf(delivery$Time),
+     main="Redesigned ECDF",
+     xlab="Delivery Time (Hours)",
+     ylab="Cumulative Probability",
+     col="darkgreen",
+     lwd=3)
+
+grid()
+
+qqnorm(delivery$Time,
+       main="Redesigned Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Sample Quantiles",
+       pch=19,
+       col="purple")
+
+qqline(delivery$Time,col="red",lwd=2)
+grid()
