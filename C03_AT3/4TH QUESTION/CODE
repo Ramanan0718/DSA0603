@@ -1,0 +1,35 @@
+#-----------------------------
+# QUESTION 4
+# Treemap + Sunburst
+#-----------------------------
+
+library(treemap)
+library(plotly)
+
+expense <- data.frame(
+ Campus=c(rep("Campus A",4),
+          rep("Campus B",4),
+          rep("Campus C",4)),
+ Department=rep(c("Engineering","Engineering",
+                  "Management","Management"),3),
+ Type=rep(c("Salary","Equipment",
+            "Salary","Guest"),3),
+ Amount=c(62000,34000,28000,15000,
+          54000,40000,24000,17000,
+          66000,31000,26000,19000)
+)
+
+# Treemap
+treemap(expense,
+        index=c("Campus","Department","Type"),
+        vSize="Amount",
+        type="index",
+        title="Campus Expenditure Treemap")
+
+# Sunburst
+plot_ly(
+ labels=expense$Type,
+ parents=expense$Department,
+ values=expense$Amount,
+ type='sunburst'
+)
