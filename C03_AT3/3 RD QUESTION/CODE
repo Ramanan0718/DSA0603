@@ -1,0 +1,29 @@
+# Install once
+# install.packages(c("ggplot2","gridExtra"))
+
+library(ggplot2)
+library(gridExtra)
+
+# Dataset (Chennai example)
+apps <- data.frame(
+  Category = c("Games","Social","Utility"),
+  Downloads = c(30,42,18)
+)
+
+# PIE CHART (Round)
+pie_plot <- ggplot(apps, aes(x = "", y = Downloads, fill = Category)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  labs(title = "Original Pie Chart") +
+  theme_void()
+
+# BAR CHART
+bar_plot <- ggplot(apps, aes(x = Category, y = Downloads, fill = Category)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Redesigned Bar Chart",
+       x = "App Category",
+       y = "Downloads") +
+  theme_minimal()
+
+# SHOW BOTH IN ONE OUTPUT
+grid.arrange(pie_plot, bar_plot, ncol = 2)
