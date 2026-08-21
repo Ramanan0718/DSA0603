@@ -1,0 +1,30 @@
+#-----------------------------
+# QUESTION 2
+# Bean / Violin Plot
+#-----------------------------
+
+library(ggplot2)
+
+marks <- data.frame(
+ Subject=c(rep("Physics",5),rep("Chemistry",5),
+           rep("Math",5),rep("Biology",5)),
+ Marks=c(58,63,70,77,85,
+         52,60,68,74,82,
+         61,66,73,80,90,
+         55,62,69,76,88)
+)
+
+# Original Boxplot
+ggplot(marks,aes(Subject,Marks,fill=Subject))+
+ geom_boxplot()+
+ ggtitle("Original Boxplot")
+
+# Redesigned Violin Plot
+ggplot(marks,aes(Subject,Marks,fill=Subject))+
+ geom_violin(alpha=0.6)+
+ geom_boxplot(width=0.15,fill="white")+
+ geom_jitter(width=0.08,size=2)+
+ labs(title="Redesigned Violin Plot",
+      x="Subject",
+      y="Marks")+
+ theme_minimal()
