@@ -1,0 +1,24 @@
+library(ggplot2)
+
+Height <- c(150,152,155,158,160,161,163,165,166,168,
+            170,171,173,175,176,178,180,182,184,186)
+
+Weight <- c(48,50,53,55,57,59,60,62,64,65,
+            68,69,71,73,74,77,80,82,85,88)
+
+body <- data.frame(Height, Weight)
+
+# 2D Histogram
+ggplot(body, aes(Height, Weight)) +
+  geom_bin2d(bins = 8) +
+  scale_fill_gradient(low = "lightyellow",
+                      high = "darkred") +
+  labs(title = "2D Histogram of Height and Weight") +
+  theme_minimal()
+
+# 2D Density Plot
+ggplot(body, aes(Height, Weight)) +
+  geom_point(color = "black") +
+  geom_density_2d(color = "blue", linewidth = 1) +
+  labs(title = "2D Density Estimation") +
+  theme_minimal()
