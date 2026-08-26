@@ -1,0 +1,25 @@
+library(ggplot2)
+library(gridExtra)
+
+Department <- c("CSE","ECE","EEE","MECH","CIVIL","AIDS","IT")
+Pass <- c(91,93,92,89,90,95,94)
+
+df <- data.frame(Department, Pass)
+
+# Misleading
+p1 <- ggplot(df, aes(Department, Pass, fill=Pass)) +
+  geom_col() +
+  coord_cartesian(ylim=c(88,96)) +
+  labs(title="Misleading Chart") +
+  theme_minimal()
+
+# Redesigned
+p2 <- ggplot(df[order(df$Pass),],
+             aes(reorder(Department, Pass), Pass, fill=Pass)) +
+  geom_col() +
+  geom_text(aes(label=Pass), vjust=-0.4) +
+  ylim(0,100) +
+  labs(title="Redesigned Chart") +
+  theme_minimal()
+
+grid.arrange(p1, p2, ncol=2)
