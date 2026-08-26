@@ -1,0 +1,25 @@
+library(ggplot2)
+library(gridExtra)
+
+A <- c(52,55,57,58,60,61,62,64,65,66,68,70,72,74,78)
+B <- c(45,49,51,53,55,56,58,59,60,62,63,65,67,69,71)
+C <- c(58,60,61,63,64,65,67,68,70,71,72,74,76,80,84)
+
+score <- data.frame(
+  Group = rep(c("A","B","C"), each=15),
+  Marks = c(A,B,C)
+)
+
+p1 <- ggplot(score, aes(Group, Marks, fill=Group)) +
+  geom_boxplot(alpha=0.7) +
+  geom_jitter(width=0.12) +
+  labs(title="Boxplot") +
+  theme_minimal()
+
+p2 <- ggplot(score, aes(Group, Marks, fill=Group)) +
+  geom_violin(alpha=0.5) +
+  geom_jitter(width=0.08) +
+  labs(title="Violin Plot") +
+  theme_minimal()
+
+grid.arrange(p1, p2, ncol=2)
