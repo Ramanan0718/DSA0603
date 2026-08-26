@@ -1,0 +1,56 @@
+library(ggplot2)
+
+# Dataset
+Advertising <- c(10,12,15,18,20,23,25,28,30,33,36,40)
+Sales <- c(48,51,53,57,60,61,66,69,72,75,79,84)
+
+data <- data.frame(Advertising, Sales)
+
+# Linear Regression Model
+model <- lm(Sales ~ Advertising, data = data)
+
+# Create values for confidence band
+newdata <- data.frame(
+  Advertising = seq(min(Advertising), max(Advertising), length.out = 100)
+)
+
+pred <- predict(model, newdata, interval = "confidence")
+
+plot_data <- data.frame(
+  Advertising = newdata$Advertising,
+  fit = pred[,1],
+  lwr = pred[,2],
+  upr = pred[,3]
+)
+
+# Final Plot
+ggplot(data, aes(x = Advertising, y = Sales)) +
+
+  # Original observations
+  geom_point(size = 3, color = "blue") +
+
+  # 95% Confidence Band
+  geom_ribbon(
+    data = plot_data,
+    aes(x = Advertising, ymin = lwr, ymax = upr),
+    inherit.aes = FALSE,
+    fill = "pink",
+    alpha = 0.3
+  ) +
+
+  # Regression Line
+  geom_line(
+    data = plot_data,
+    aes(x = Advertising, y = fit),
+    inherit.aes = FALSE,
+    color = "red",
+    linewidth = 1.2
+  ) +
+
+  labs(
+    title = "Advertising vs Sales with 95% Confidence Band",
+    x = "Advertising Expenditure",
+    y = "Sales"
+  ) +
+
+  theme_minimal()
