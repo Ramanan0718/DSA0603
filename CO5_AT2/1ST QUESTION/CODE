@@ -1,0 +1,24 @@
+library(ggplot2)
+library(gridExtra)
+
+Time <- c(18,21,22,24,25,25,27,28,29,30,
+          31,32,33,35,36,38,41,43,46,50)
+
+df <- data.frame(Time)
+
+p1 <- ggplot(df, aes(Time)) +
+  geom_histogram(binwidth=4, fill="skyblue", color="black") +
+  labs(title="Histogram") +
+  theme_minimal()
+
+p2 <- ggplot(df, aes(Time)) +
+  geom_density(fill="lightgreen", alpha=0.6, color="darkgreen") +
+  labs(title="Density Plot") +
+  theme_minimal()
+
+p3 <- ggplot(df, aes(Time)) +
+  stat_ecdf(geom="step", color="blue", linewidth=1.2) +
+  labs(title="ECDF") +
+  theme_minimal()
+
+grid.arrange(p1, p2, p3, ncol=3)
