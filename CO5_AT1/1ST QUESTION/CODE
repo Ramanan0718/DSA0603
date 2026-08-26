@@ -1,0 +1,40 @@
+library(boot)
+library(ggplot2)
+
+# Dataset
+delivery <- c(31,35,28,42,37,33,45,29,39,34,41,36)
+
+# Sample Mean
+mean_delivery <- mean(delivery)
+print(mean_delivery)
+
+# Bootstrap function
+boot_mean <- function(data, index){
+  mean(data[index])
+}
+
+# 5000 Bootstrap Resamples
+set.seed(123)
+result <- boot(delivery, statistic = boot_mean, R = 5000)
+
+# 95% Confidence Interval
+ci <- boot.ci(result, type = "perc")
+print(ci)
+
+# Bootstrap Distribution Plot
+boot_data <- data.frame(mean = result$t)
+
+ggplot(boot_data, aes(x = mean)) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 25,
+                 fill = "skyblue",
+                 color = "black") +
+  geom_density(color = "blue", linewidth = 1) +
+  geom_vline(xintercept = mean_delivery,
+             color = "red",
+             linewidth = 1.2,
+             linetype = "dashed") +
+  labs(title = "Bootstrap Distribution of Mean Delivery Time",
+       x = "Bootstrap Mean",
+       y = "Density") +
+  theme_minimal()
