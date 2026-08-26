@@ -1,0 +1,25 @@
+library(ggplot2)
+
+Category <- c("A","B","C","D","E","F","G")
+Satisfaction <- c(42,48,55,61,67,74,82)
+
+data <- data.frame(Category, Satisfaction)
+
+# Plot 1 : Misleading Diverging Colors
+ggplot(data,
+       aes(Category, Satisfaction, fill = Satisfaction)) +
+  geom_col() +
+  scale_fill_gradient2(low = "red",
+                       mid = "yellow",
+                       high = "green",
+                       midpoint = 60) +
+  labs(title = "Misleading Diverging Color Scale") +
+  theme_minimal()
+
+# Plot 2 : Accessible Sequential Colors
+ggplot(data,
+       aes(Category, Satisfaction, fill = Satisfaction)) +
+  geom_col() +
+  scale_fill_viridis_c(option = "C") +
+  labs(title = "Color-Blind Friendly Sequential Scale") +
+  theme_minimal()
