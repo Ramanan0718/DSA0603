@@ -1,0 +1,103 @@
+#====================================================
+# SET 21 : WEBSITE TRAFFIC ANALYSIS
+# ALL 4 OUTPUTS IN ONE PAGE
+#====================================================
+
+# Load Libraries
+library(ggplot2)
+library(reshape2)
+library(patchwork)
+library(gridExtra)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+traffic <- data.frame(
+  Date = as.Date(c("2023-01-01","2023-01-02","2023-01-03",
+                   "2023-01-04","2023-01-05")),
+  PageViews = c(1500,1600,1400,1650,1800),
+  CTR = c(2.3,2.7,2.0,2.4,2.6),
+
+  # Sample interaction data (illustrative)
+  Likes = c(220,250,180,260,300),
+  Shares = c(80,95,70,90,110),
+  Comments = c(45,55,40,50,65)
+)
+
+print(traffic)
+
+#----------------------------------------------------
+# QUESTION 1 : LINE CHART
+#----------------------------------------------------
+p1 <- ggplot(traffic,
+             aes(x = Date, y = PageViews, group = 1)) +
+  geom_line(color = "blue", linewidth = 1.2) +
+  geom_point(color = "red", size = 3) +
+  geom_text(aes(label = PageViews),
+            vjust = -0.6, size = 3.5) +
+  labs(title = "Page Views Trend",
+       x = "Date",
+       y = "Page Views") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 2 : BAR CHART (CTR)
+#----------------------------------------------------
+p2 <- ggplot(traffic,
+             aes(x = as.character(Date),
+                 y = CTR,
+                 fill = CTR)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_text(aes(label = paste0(CTR,"%")),
+            vjust = -0.5, size = 4) +
+  labs(title = "Click Through Rate",
+       x = "Date",
+       y = "CTR (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+#----------------------------------------------------
+# QUESTION 3 : STACKED AREA CHART
+#----------------------------------------------------
+interaction <- traffic[,c("Date","Likes","Shares","Comments")]
+
+area_data <- melt(interaction,
+                  id.vars = "Date",
+                  variable.name = "Type",
+                  value.name = "Count")
+
+p3 <- ggplot(area_data,
+             aes(x = Date,
+                 y = Count,
+                 fill = Type)) +
+  geom_area(alpha = 0.8) +
+  labs(title = "User Interactions",
+       x = "Date",
+       y = "Count") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 4 : TABLE
+#----------------------------------------------------
+table_plot <- tableGrob(
+  traffic[,c("Date","PageViews","CTR")]
+)
+
+#----------------------------------------------------
+# FINAL DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+             (p3 | wrap_elements(full = table_plot))
+
+dashboard <- dashboard +
+  plot_annotation(
+    title = "SET 21 : WEBSITE TRAFFIC DASHBOARD",
+    theme = theme(
+      plot.title = element_text(size = 16,
+                                face = "bold",
+                                hjust = 0.5)
+    )
+  )
+
+# Display Dashboard
+print(dashboard)
