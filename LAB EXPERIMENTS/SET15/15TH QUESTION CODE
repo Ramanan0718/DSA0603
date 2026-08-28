@@ -1,0 +1,86 @@
+#====================================================
+# SET 15 : SURVEY RESPONSES ANALYSIS
+# ALL 4 OUTPUTS IN ONE PAGE
+#====================================================
+
+# Load Libraries
+library(ggplot2)
+library(reshape2)
+library(patchwork)
+library(gridExtra)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+survey <- data.frame(
+  SurveyID = c(1,2,3),
+  Q1 = c("A","B","C"),
+  Q2 = c("B","A","A"),
+  Q3 = c("C","D","B")
+)
+
+print(survey)
+
+#----------------------------------------------------
+# QUESTION 1 : GROUPED BAR CHART
+#----------------------------------------------------
+q1_count <- as.data.frame(table(survey$Q1))
+colnames(q1_count) <- c("Answer","Count")
+
+p1 <- ggplot(q1_count,
+             aes(x=Answer, y=Count, fill=Answer)) +
+  geom_bar(stat="identity", width=0.6) +
+  geom_text(aes(label=Count),
+            vjust=-0.5, size=5) +
+  labs(title="Grouped Bar Chart - Question 1",
+       x="Responses",
+       y="Count") +
+  theme_minimal() +
+  theme(legend.position="none")
+
+#----------------------------------------------------
+# QUESTION 2 : STACKED BAR CHART
+#----------------------------------------------------
+long_data <- melt(survey,
+                  id.vars="SurveyID",
+                  variable.name="Question",
+                  value.name="Response")
+
+stack_data <- as.data.frame(table(long_data$Question,
+                                  long_data$Response))
+colnames(stack_data) <- c("Question","Response","Count")
+
+p2 <- ggplot(stack_data,
+             aes(x=Question, y=Count, fill=Response)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Count),
+            position=position_stack(vjust=0.5),
+            color="white", size=4) +
+  labs(title="Stacked Bar Chart - All Questions",
+       x="Survey Questions",
+       y="Responses") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 3 : TABLE
+#----------------------------------------------------
+table_plot <- tableGrob(survey)
+
+#----------------------------------------------------
+# QUESTION 4 : DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+  wrap_elements(full=table_plot)
+
+dashboard <- dashboard +
+  plot_annotation(
+    title="SET 15 : SURVEY RESPONSES DASHBOARD",
+    theme=theme(
+      plot.title=element_text(size=16,
+                              face="bold",
+                              hjust=0.5)
+    )
+  )
+
+# Display Final Dashboard
+print(dashboard)
