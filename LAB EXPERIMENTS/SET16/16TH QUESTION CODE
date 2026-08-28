@@ -1,0 +1,92 @@
+#====================================================
+# SET 16 : STOCK ANALYSIS
+# ALL 4 OUTPUTS IN ONE PAGE
+#====================================================
+
+# Load Libraries
+library(ggplot2)
+library(reshape2)
+library(patchwork)
+library(gridExtra)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+stock <- data.frame(
+  Date = as.Date(c("2023-01-01","2023-01-02","2023-01-03")),
+  StockA = c(100,105,110),
+  StockB = c(150,152,148),
+  StockC = c(120,118,122)
+)
+
+print(stock)
+
+#----------------------------------------------------
+# QUESTION 1 : LINE CHART
+#----------------------------------------------------
+stock_long <- melt(stock,
+                   id.vars = "Date",
+                   variable.name = "Company",
+                   value.name = "Price")
+
+p1 <- ggplot(stock_long,
+             aes(x = Date,
+                 y = Price,
+                 color = Company,
+                 group = Company)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  labs(title = "Stock Price Trend",
+       x = "Date",
+       y = "Stock Price") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 2 : BAR CHART
+# Daily Percentage Change of Stock A
+#----------------------------------------------------
+pct_change <- c(0,
+                diff(stock$StockA) /
+                head(stock$StockA,-1) * 100)
+
+change_df <- data.frame(
+  Date = stock$Date,
+  Change = round(pct_change,2)
+)
+
+p2 <- ggplot(change_df,
+             aes(x = as.character(Date),
+                 y = Change,
+                 fill = Change)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_text(aes(label = paste0(Change,"%")),
+            vjust = -0.5, size = 4) +
+  labs(title = "Daily % Change - Stock A",
+       x = "Date",
+       y = "Percentage Change") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+#----------------------------------------------------
+# QUESTION 3 : TABLE
+#----------------------------------------------------
+table_plot <- tableGrob(stock)
+
+#----------------------------------------------------
+# QUESTION 4 : DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+  wrap_elements(full = table_plot)
+
+dashboard <- dashboard +
+  plot_annotation(
+    title = "SET 16 : STOCK ANALYSIS DASHBOARD",
+    theme = theme(
+      plot.title = element_text(size = 16,
+                                face = "bold",
+                                hjust = 0.5)
+    )
+  )
+
+# Display Final Dashboard
+print(dashboard)
