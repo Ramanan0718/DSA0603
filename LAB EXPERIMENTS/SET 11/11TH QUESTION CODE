@@ -1,0 +1,82 @@
+#====================================================
+# SET 11 : PRODUCT CATEGORY ANALYSIS
+# ALL 4 QUESTIONS IN A SINGLE R PROGRAM
+#====================================================
+
+# Load libraries
+library(ggplot2)
+library(patchwork)
+library(gridExtra)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+category <- data.frame(
+  Category = c("Electronics","Clothing","Appliances"),
+  Sales = c(50000,35000,40000)
+)
+
+print(category)
+
+#----------------------------------------------------
+# QUESTION 1 - PIE CHART
+#----------------------------------------------------
+p1 <- ggplot(category, aes(x="", y=Sales, fill=Category)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y") +
+  geom_text(aes(label=paste0(round(Sales/sum(Sales)*100),"%")),
+            position=position_stack(vjust=0.5),
+            color="white", size=5) +
+  labs(title="Sales Distribution by Product Category",
+       fill="Category") +
+  theme_void()
+
+#----------------------------------------------------
+# QUESTION 2 - FUNNEL CHART
+#----------------------------------------------------
+funnel <- category[order(-category$Sales), ]
+max_sales <- max(funnel$Sales)
+
+funnel$xmin <- (max_sales - funnel$Sales)/2
+funnel$xmax <- funnel$xmin + funnel$Sales
+funnel$ymin <- c(3,2,1)
+funnel$ymax <- c(4,3,2)
+
+p2 <- ggplot(funnel) +
+  geom_rect(aes(xmin=xmin, xmax=xmax,
+                ymin=ymin, ymax=ymax,
+                fill=Category),
+            color="white") +
+  geom_text(aes(x=max_sales/2,
+                y=(ymin+ymax)/2,
+                label=paste(Category,"-",Sales)),
+            color="white", fontface="bold", size=4) +
+  labs(title="Funnel Chart - Sales Conversion") +
+  xlim(0, max_sales) +
+  ylim(1,4) +
+  theme_void() +
+  theme(legend.position="none")
+
+#----------------------------------------------------
+# QUESTION 3 - TABLE
+#----------------------------------------------------
+table_plot <- tableGrob(category)
+
+#----------------------------------------------------
+# QUESTION 4 - DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+  wrap_elements(full=table_plot)
+
+dashboard <- dashboard +
+  plot_annotation(
+    title="SET 11 : PRODUCT CATEGORY DASHBOARD",
+    theme=theme(
+      plot.title=element_text(size=16,
+                              face="bold",
+                              hjust=0.5)
+    )
+  )
+
+# Display Final Dashboard
+print(dashboard)
