@@ -1,0 +1,36 @@
+# Install once
+# install.packages(c("ggplot2","patchwork","DT"))
+
+library(ggplot2)
+library(patchwork)
+library(DT)
+
+inventory <- data.frame(
+  ProductID = c(1,2,3),
+  ProductName = c("Product A","Product B","Product C"),
+  Category = c("Electronics","Electronics","Accessories"),
+  Quantity = c(250,175,300),
+  Price = c(20,15,18)
+)
+
+# Bar Chart
+p1 <- ggplot(inventory,
+             aes(ProductName, Quantity, fill = ProductName)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Inventory Quantity") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Stacked Bar Chart
+p2 <- ggplot(inventory,
+             aes(Category, Quantity, fill = ProductName)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Product Categories") +
+  theme_minimal()
+
+# Dashboard
+p1 + p2
+
+# Interactive Table
+datatable(inventory,
+          caption = "Product Inventory Dashboard")
