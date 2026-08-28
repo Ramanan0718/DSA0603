@@ -1,0 +1,18 @@
+library(ggplot2)
+
+inventory <- data.frame(
+  ProductID = c(1,2,3),
+  ProductName = c("Product A","Product B","Product C"),
+  Quantity = c(250,175,300),
+  Price = c(20,15,18)
+)
+
+ggplot(inventory, aes(x = ProductName, y = Quantity, fill = ProductName)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Product Inventory Quantity",
+    x = "Product Name",
+    y = "Quantity Available"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
