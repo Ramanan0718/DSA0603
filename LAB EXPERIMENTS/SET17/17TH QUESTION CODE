@@ -1,0 +1,118 @@
+#====================================================
+# SET 17 : CUSTOMER SATISFACTION ANALYSIS
+# ALL 4 OUTPUTS IN ONE PAGE
+#====================================================
+
+# Load Libraries
+library(ggplot2)
+library(patchwork)
+library(wordcloud)
+library(RColorBrewer)
+library(ggplotify)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+customer <- data.frame(
+  CustomerID = c(1,2,3,4,5),
+  Age = c(28,35,42,30,45),
+  Satisfaction = c(4,5,3,4,5)
+)
+
+# Sample customer feedback
+feedback <- c(
+  "Excellent service",
+  "Very satisfied",
+  "Good quality",
+  "Fast delivery",
+  "Friendly staff",
+  "Excellent support",
+  "Happy customer",
+  "Good experience"
+)
+
+print(customer)
+
+#----------------------------------------------------
+# QUESTION 1 : HISTOGRAM
+#----------------------------------------------------
+p1 <- ggplot(customer, aes(x = Age)) +
+  geom_histogram(binwidth = 5,
+                 fill = "steelblue",
+                 color = "black") +
+  labs(title = "Customer Age Distribution",
+       x = "Age",
+       y = "Frequency") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 2 : PIE CHART
+#----------------------------------------------------
+pie_data <- as.data.frame(table(customer$Satisfaction))
+colnames(pie_data) <- c("Score","Count")
+
+p2 <- ggplot(pie_data,
+             aes(x = "", y = Count, fill = Score)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  geom_text(aes(label = Count),
+            position = position_stack(vjust = 0.5),
+            color = "white") +
+  labs(title = "Satisfaction Score Distribution",
+       fill = "Score") +
+  theme_void()
+
+#----------------------------------------------------
+# QUESTION 3 : STACKED BAR CHART
+#----------------------------------------------------
+customer$AgeGroup <- cut(customer$Age,
+                         breaks = c(20,30,40,50),
+                         labels = c("21-30","31-40","41-50"),
+                         include.lowest = TRUE)
+
+p3 <- ggplot(customer,
+             aes(x = AgeGroup,
+                 fill = factor(Satisfaction))) +
+  geom_bar() +
+  labs(title = "Age Group vs Satisfaction",
+       x = "Age Group",
+       y = "Customers",
+       fill = "Score") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 4 : WORD CLOUD
+#----------------------------------------------------
+text_data <- paste(feedback, collapse = " ")
+
+p4 <- as.ggplot(~{
+  par(mar = c(0,0,2,0))
+  wordcloud(
+    words = unlist(strsplit(text_data, " ")),
+    random.order = FALSE,
+    colors = brewer.pal(8,"Dark2"),
+    scale = c(2.5,0.8)
+  )
+  title("Customer Feedback Word Cloud")
+})
+
+#----------------------------------------------------
+# DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+             (p3 | p4)
+
+dashboard <- dashboard +
+  plot_annotation(
+    title = "SET 17 : CUSTOMER SATISFACTION DASHBOARD",
+    theme = theme(
+      plot.title = element_text(
+        size = 16,
+        face = "bold",
+        hjust = 0.5
+      )
+    )
+  )
+
+# Display Final Dashboard
+print(dashboard)
