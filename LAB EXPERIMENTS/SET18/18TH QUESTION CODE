@@ -1,0 +1,85 @@
+#====================================================
+# SET 18 : TIME SERIES ANALYSIS
+# ALL 4 OUTPUTS IN ONE PAGE
+#====================================================
+
+# Load Libraries
+library(ggplot2)
+library(patchwork)
+library(gridExtra)
+library(ggplotify)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+sales <- data.frame(
+  Month = factor(c("January","February","March","April","May"),
+                 levels=c("January","February","March","April","May")),
+  Sales = c(15000,18000,22000,20000,23000),
+  AdBudget = c(3000,3500,4200,3800,4500)
+)
+
+print(sales)
+
+#----------------------------------------------------
+# QUESTION 1 : TIME SERIES LINE CHART
+#----------------------------------------------------
+p1 <- ggplot(sales,
+             aes(x=Month, y=Sales, group=1)) +
+  geom_line(color="blue", linewidth=1.2) +
+  geom_point(color="red", size=3) +
+  geom_text(aes(label=Sales), vjust=-0.6, size=3.5) +
+  labs(title="Monthly Sales Trend",
+       x="Month",
+       y="Sales ($)") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 2 : SCATTER PLOT
+#----------------------------------------------------
+p2 <- ggplot(sales,
+             aes(x=AdBudget, y=Sales)) +
+  geom_point(color="darkgreen", size=4) +
+  geom_smooth(method="lm", se=FALSE,
+              color="black", linetype="dashed") +
+  geom_text(aes(label=Month), vjust=-1, size=3.5) +
+  labs(title="Advertising Budget vs Sales",
+       x="Advertising Budget ($)",
+       y="Sales ($)") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 3 : MONTHLY SALES TABLE
+#----------------------------------------------------
+table_plot <- tableGrob(sales[,1:2])
+
+#----------------------------------------------------
+# QUESTION 4 : AUTOCORRELATION (ACF) PLOT
+#----------------------------------------------------
+ts_sales <- ts(sales$Sales, frequency=12)
+
+p4 <- as.ggplot(~{
+  par(mar=c(4,4,2,1))
+  acf(ts_sales,
+      main="Autocorrelation of Monthly Sales",
+      col="blue", lwd=2)
+})
+
+#----------------------------------------------------
+# DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+             (wrap_elements(full=table_plot) | p4)
+
+dashboard <- dashboard +
+  plot_annotation(
+    title="SET 18 : TIME SERIES ANALYSIS DASHBOARD",
+    theme=theme(
+      plot.title=element_text(size=16,
+                              face="bold",
+                              hjust=0.5)
+    )
+  )
+
+# Display Final Dashboard
+print(dashboard)
