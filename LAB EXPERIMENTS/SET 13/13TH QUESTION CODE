@@ -1,0 +1,86 @@
+#====================================================
+# SET 13 : GEOGRAPHIC DATA ANALYSIS
+# ALL 4 OUTPUTS IN ONE PAGE
+#====================================================
+
+# Load Libraries
+library(ggplot2)
+library(patchwork)
+library(gridExtra)
+library(maps)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+geo <- data.frame(
+  City = c("City A","City B","City C"),
+  Population = c(500000,700000,600000),
+  Temperature = c(75,68,80),
+  Elevation = c(1000,800,1200),
+  Lon = c(-100,-90,-80),     # Sample Longitude
+  Lat = c(40,35,45)          # Sample Latitude
+)
+
+print(geo)
+
+#----------------------------------------------------
+# QUESTION 1 : MAP CHART
+#----------------------------------------------------
+world <- map_data("world")
+
+p1 <- ggplot() +
+  geom_polygon(data=world,
+               aes(x=long, y=lat, group=group),
+               fill="gray90", color="white") +
+  geom_point(data=geo,
+             aes(x=Lon, y=Lat, color=City),
+             size=4) +
+  geom_text(data=geo,
+            aes(x=Lon, y=Lat, label=City),
+            vjust=-1, size=4) +
+  labs(title="Geographic Distribution of Cities",
+       x="Longitude",
+       y="Latitude") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 2 : SCATTER PLOT
+#----------------------------------------------------
+p2 <- ggplot(geo,
+             aes(x=Temperature,
+                 y=Population,
+                 color=City)) +
+  geom_point(size=4) +
+  geom_smooth(method="lm", se=FALSE,
+              color="black", linetype="dashed") +
+  geom_text(aes(label=City), vjust=-1) +
+  labs(title="Temperature vs Population",
+       x="Average Temperature (°F)",
+       y="Population") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 3 : TABLE
+#----------------------------------------------------
+table_plot <- tableGrob(
+  geo[,1:4]
+)
+
+#----------------------------------------------------
+# QUESTION 4 : DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+  wrap_elements(full=table_plot)
+
+dashboard <- dashboard +
+  plot_annotation(
+    title="SET 13 : GEOGRAPHIC DATA DASHBOARD",
+    theme=theme(
+      plot.title=element_text(size=16,
+                              face="bold",
+                              hjust=0.5)
+    )
+  )
+
+# Display Final Dashboard
+print(dashboard)
