@@ -1,0 +1,17 @@
+library(ggplot2)
+
+inventory <- data.frame(
+  ProductName = c("Product A","Product B","Product C"),
+  Category = c("Electronics","Electronics","Accessories"),
+  Quantity = c(250,175,300)
+)
+
+ggplot(inventory,
+       aes(x = Category, y = Quantity, fill = ProductName)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Stacked Bar Chart of Product Categories",
+    x = "Category",
+    y = "Quantity"
+  ) +
+  theme_minimal()
