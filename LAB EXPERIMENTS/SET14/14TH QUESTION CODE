@@ -1,0 +1,80 @@
+#====================================================
+# SET 14 : PRODUCT INVENTORY MANAGEMENT
+# ALL 4 OUTPUTS IN ONE PAGE
+#====================================================
+
+# Load Libraries
+library(ggplot2)
+library(patchwork)
+library(gridExtra)
+
+#----------------------------------------------------
+# DATASET
+#----------------------------------------------------
+inventory <- data.frame(
+  ProductID = c(1,2,3),
+  ProductName = c("Product A","Product B","Product C"),
+  Quantity = c(250,175,300),
+  Price = c(20,15,18),
+  Category = c("Electronics","Electronics","Accessories")
+)
+
+print(inventory)
+
+#----------------------------------------------------
+# QUESTION 1 : BAR CHART
+#----------------------------------------------------
+p1 <- ggplot(inventory,
+             aes(x=ProductName,
+                 y=Quantity,
+                 fill=ProductName)) +
+  geom_bar(stat="identity", width=0.6) +
+  geom_text(aes(label=Quantity),
+            vjust=-0.5, size=4) +
+  labs(title="Quantity Available by Product",
+       x="Product Name",
+       y="Quantity") +
+  theme_minimal() +
+  theme(legend.position="none")
+
+#----------------------------------------------------
+# QUESTION 2 : STACKED BAR CHART
+#----------------------------------------------------
+p2 <- ggplot(inventory,
+             aes(x=Category,
+                 y=Quantity,
+                 fill=ProductName)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity),
+            position=position_stack(vjust=0.5),
+            color="white", size=4) +
+  labs(title="Quantity by Product Category",
+       x="Category",
+       y="Quantity") +
+  theme_minimal()
+
+#----------------------------------------------------
+# QUESTION 3 : TABLE
+#----------------------------------------------------
+table_plot <- tableGrob(
+  inventory[,1:4]
+)
+
+#----------------------------------------------------
+# QUESTION 4 : DASHBOARD
+#----------------------------------------------------
+dashboard <- (p1 | p2) /
+  wrap_elements(full=table_plot)
+
+dashboard <- dashboard +
+  plot_annotation(
+    title="SET 14 : PRODUCT INVENTORY DASHBOARD",
+    theme=theme(
+      plot.title=element_text(size=16,
+                              face="bold",
+                              hjust=0.5)
+    )
+  )
+
+# Display Final Dashboard
+print(dashboard)
