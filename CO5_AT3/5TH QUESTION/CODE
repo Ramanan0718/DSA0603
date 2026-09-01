@@ -1,0 +1,104 @@
+# Install packages (Run once)
+install.packages("shiny")
+install.packages("shinydashboard")
+install.packages("plotly")
+install.packages("dplyr")
+
+# Load libraries
+library(shiny)
+library(shinydashboard)
+library(plotly)
+library(dplyr)
+
+# -----------------------------
+# DATASET
+# -----------------------------
+pass <- data.frame(
+  Department = c("CSE","ECE","EEE","MECH","CIVIL","AIDS","IT"),
+  Pass = c(91,93,92,89,90,95,94)
+)
+
+# Ordered data for redesigned chart
+ordered_pass <- pass %>%
+  arrange(desc(Pass))
+
+# -----------------------------
+# UI
+# -----------------------------
+ui <- dashboardPage(
+  dashboardHeader(title = "Misleading vs Redesigned Dashboard"),
+  
+  dashboardSidebar(
+    h4("Dashboard Comparison"),
+    p("Same data - Different design")
+  ),
+  
+  dashboardBody(
+    fluidRow(
+      box(
+        title = "1. Misleading Dashboard",
+        width = 6,
+        plotlyOutput("misChart", height = 420)
+      ),
+      
+      box(
+        title = "2. Redesigned Dashboard",
+        width = 6,
+        plotlyOutput("goodChart", height = 420)
+      )
+    )
+  )
+)
+
+# -----------------------------
+# SERVER
+# -----------------------------
+server <- function(input, output){
+  
+  # Misleading Version
+  output$misChart <- renderPlotly({
+    
+    colors <- c("gray","gray","gray","gray","gray","red","gray")
+    
+    plot_ly(
+      pass,
+      x = ~Department,
+      y = ~Pass,
+      type = "bar",
+      marker = list(color = colors)
+    ) %>%
+      layout(
+        title = "Misleading Pass Percentage",
+        yaxis = list(
+          title = "Pass %",
+          range = c(88,96)        # Truncated Y-axis
+        )
+      )
+  })
+  
+  # Redesigned Version
+  output$goodChart <- renderPlotly({
+    
+    plot_ly(
+      ordered_pass,
+      x = ~Department,
+      y = ~Pass,
+      type = "bar",
+      color = ~Department,
+      text = ~paste0(Pass,"%"),
+      textposition = "outside"
+    ) %>%
+      layout(
+        title = "Accurate Pass Percentage",
+        yaxis = list(
+          title = "Pass %",
+          range = c(0,100)        # Correct baseline
+        )
+      )
+  })
+}
+
+# -----------------------------
+# RUN APP
+# -----------------------------
+shinyApp(ui, server)
