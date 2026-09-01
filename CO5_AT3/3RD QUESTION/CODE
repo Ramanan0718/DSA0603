@@ -1,0 +1,112 @@
+# Install packages (Run once)
+install.packages("shiny")
+install.packages("shinydashboard")
+install.packages("plotly")
+install.packages("dplyr")
+
+# Load libraries
+library(shiny)
+library(shinydashboard)
+library(plotly)
+library(dplyr)
+
+# -----------------------------
+# DATASET
+# -----------------------------
+students <- data.frame(
+  Program = c("CSE","CSE","CSE","ECE","ECE","MECH","MECH","MECH"),
+  Specialization = c("AI/ML","Cyber Security","Core CSE",
+                     "VLSI","Communications",
+                     "Robotics","Thermal","Design"),
+  Enrollment = c(65,40,90,35,50,30,45,28)
+)
+
+# -----------------------------
+# UI
+# -----------------------------
+ui <- dashboardPage(
+  dashboardHeader(title = "Student Enrollment Dashboard"),
+  
+  dashboardSidebar(
+    h4("Drill-Down Dashboard"),
+    p("Click a Program bar")
+  ),
+  
+  dashboardBody(
+    fluidRow(
+      box(
+        title = "Program Level Summary",
+        width = 6,
+        plotlyOutput("programChart", height = 400)
+      ),
+      
+      box(
+        title = "Specialization Details",
+        width = 6,
+        plotlyOutput("detailChart", height = 400)
+      )
+    )
+  )
+)
+
+# -----------------------------
+# SERVER
+# -----------------------------
+server <- function(input, output, session){
+  
+  selectedProgram <- reactiveVal("CSE")
+  
+  output$programChart <- renderPlotly({
+    
+    prog <- students %>%
+      group_by(Program) %>%
+      summarise(Total = sum(Enrollment))
+    
+    plot_ly(
+      prog,
+      x = ~Program,
+      y = ~Total,
+      type = "bar",
+      color = ~Program,
+      source = "program"
+    ) %>%
+      layout(
+        title = "Total Enrollment by Program",
+        xaxis = list(title = "Program"),
+        yaxis = list(title = "Students")
+      )
+  })
+  
+  observeEvent(event_data("plotly_click", source = "program"),{
+    
+    click <- event_data("plotly_click", source = "program")
+    
+    if(!is.null(click)){
+      selectedProgram(as.character(click$x))
+    }
+  })
+  
+  output$detailChart <- renderPlotly({
+    
+    detail <- students %>%
+      filter(Program == selectedProgram())
+    
+    plot_ly(
+      detail,
+      x = ~Specialization,
+      y = ~Enrollment,
+      type = "bar",
+      color = ~Specialization
+    ) %>%
+      layout(
+        title = paste("Specializations in", selectedProgram()),
+        xaxis = list(title = "Specialization"),
+        yaxis = list(title = "Enrollment")
+      )
+  })
+}
+
+# -----------------------------
+# RUN APP
+# -----------------------------
+shinyApp(ui, server)
