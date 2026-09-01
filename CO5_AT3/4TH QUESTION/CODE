@@ -1,0 +1,116 @@
+# Install packages (Run once)
+install.packages("shiny")
+install.packages("shinydashboard")
+install.packages("plotly")
+install.packages("dplyr")
+
+# Load libraries
+library(shiny)
+library(shinydashboard)
+library(plotly)
+library(dplyr)
+
+# -----------------------------
+# DATASET
+# -----------------------------
+marketing <- data.frame(
+  Advertising = c(10,12,14,16,18,20,22,24,26,28,30,32,34,36,38),
+  Visits = c(120,135,150,165,180,195,210,225,245,260,275,290,305,320,340),
+  Sales = c(48,50,53,55,58,61,63,66,69,71,74,77,80,83,86)
+)
+
+# Linear regression for trend line
+fit <- lm(Sales ~ Advertising, data = marketing)
+marketing$Trend <- predict(fit)
+
+# -----------------------------
+# UI
+# -----------------------------
+ui <- dashboardPage(
+  dashboardHeader(title = "Marketing Analysis Dashboard"),
+  
+  dashboardSidebar(
+    h4("Multivariate Dashboard"),
+    p("Advertising, Visits & Sales")
+  ),
+  
+  dashboardBody(
+    fluidRow(
+      box(
+        title = "Advertising vs Sales",
+        width = 8,
+        plotlyOutput("scatterPlot", height = 430)
+      ),
+      
+      box(
+        title = "Sales Distribution",
+        width = 4,
+        plotlyOutput("histPlot", height = 430)
+      )
+    )
+  )
+)
+
+# -----------------------------
+# SERVER
+# -----------------------------
+server <- function(input, output){
+  
+  output$scatterPlot <- renderPlotly({
+    
+    p <- plot_ly(
+      marketing,
+      x = ~Advertising,
+      y = ~Sales,
+      type = "scatter",
+      mode = "markers",
+      color = ~Visits,
+      colors = "Blues",
+      size = ~Visits,
+      sizes = c(10,30),
+      text = ~paste(
+        "Advertising:", Advertising,
+        "<br>Visits:", Visits,
+        "<br>Sales:", Sales
+      ),
+      hoverinfo = "text"
+    )
+    
+    p <- add_lines(
+      p,
+      x = ~Advertising,
+      y = ~Trend,
+      inherit = FALSE,
+      line = list(color = "red", width = 3),
+      name = "Trend Line",
+      data = marketing
+    )
+    
+    p %>% layout(
+      title = "Advertising vs Sales with Trend Line",
+      xaxis = list(title = "Advertising Expenditure"),
+      yaxis = list(title = "Sales")
+    )
+  })
+  
+  output$histPlot <- renderPlotly({
+    
+    plot_ly(
+      marketing,
+      x = ~Sales,
+      type = "histogram",
+      nbinsx = 8,
+      marker = list(color = "steelblue")
+    ) %>%
+      layout(
+        title = "Distribution of Sales",
+        xaxis = list(title = "Sales"),
+        yaxis = list(title = "Frequency")
+      )
+  })
+}
+
+# -----------------------------
+# RUN APP
+# -----------------------------
+shinyApp(ui, server)
