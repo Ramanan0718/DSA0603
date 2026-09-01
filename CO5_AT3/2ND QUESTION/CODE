@@ -1,0 +1,130 @@
+# Install packages (Run once)
+install.packages("shiny")
+install.packages("shinydashboard")
+install.packages("plotly")
+install.packages("dplyr")
+
+# Load libraries
+library(shiny)
+library(shinydashboard)
+library(plotly)
+library(dplyr)
+
+# -----------------------------
+# DATASET
+# -----------------------------
+hr <- data.frame(
+  Department = c("Sales","Sales","Marketing","Marketing",
+                 "Engineering","Engineering",
+                 "Support","Support","HR","HR"),
+  Rating = c(7.8,8.1,7.5,7.9,8.6,8.9,7.2,7.4,8.0,8.3),
+  Attendance = c(92,95,88,90,96,97,85,87,93,94)
+)
+
+# -----------------------------
+# UI
+# -----------------------------
+ui <- dashboardPage(
+  dashboardHeader(title = "KPI Dashboard"),
+  
+  dashboardSidebar(
+    selectInput(
+      "measure",
+      "Select Measure",
+      choices = c("Average Rating","Average Attendance")
+    )
+  ),
+  
+  dashboardBody(
+    fluidRow(
+      valueBoxOutput("avgRating", width = 4),
+      valueBoxOutput("totalEmp", width = 4),
+      valueBoxOutput("avgAttend", width = 4)
+    ),
+    
+    fluidRow(
+      box(
+        title = "Department Performance",
+        width = 12,
+        plotlyOutput("barChart", height = 420)
+      )
+    )
+  )
+)
+
+# -----------------------------
+# SERVER
+# -----------------------------
+server <- function(input, output) {
+  
+  output$avgRating <- renderValueBox({
+    valueBox(
+      round(mean(hr$Rating),2),
+      "Average Rating",
+      icon = icon("star"),
+      color = "yellow"
+    )
+  })
+  
+  output$totalEmp <- renderValueBox({
+    valueBox(
+      nrow(hr),
+      "Total Employees",
+      icon = icon("users"),
+      color = "blue"
+    )
+  })
+  
+  output$avgAttend <- renderValueBox({
+    valueBox(
+      paste0(round(mean(hr$Attendance),1),"%"),
+      "Average Attendance",
+      icon = icon("calendar-check"),
+      color = "green"
+    )
+  })
+  
+  output$barChart <- renderPlotly({
+    
+    dept <- hr %>%
+      group_by(Department) %>%
+      summarise(
+        AvgRating = mean(Rating),
+        AvgAttendance = mean(Attendance)
+      )
+    
+    if(input$measure == "Average Rating"){
+      
+      plot_ly(
+        dept,
+        x = ~Department,
+        y = ~AvgRating,
+        type = "bar",
+        color = ~Department
+      ) %>%
+        layout(
+          title = "Average Rating by Department",
+          yaxis = list(title = "Rating")
+        )
+      
+    } else {
+      
+      plot_ly(
+        dept,
+        x = ~Department,
+        y = ~AvgAttendance,
+        type = "bar",
+        color = ~Department
+      ) %>%
+        layout(
+          title = "Average Attendance by Department",
+          yaxis = list(title = "Attendance (%)")
+        )
+    }
+  })
+}
+
+# -----------------------------
+# RUN APP
+# -----------------------------
+shinyApp(ui, server)
